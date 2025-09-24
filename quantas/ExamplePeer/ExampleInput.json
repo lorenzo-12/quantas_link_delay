@@ -1,0 +1,32 @@
+{
+	"experiments": [
+		{
+		"algorithm": "example",
+		"logFile": "example1.txt",
+		"threadCount": 1,
+		"parameters": {
+			"parameter1": 3.14159,
+			"parameter2": "hello",
+			"parameter3": false
+		},
+		"distribution": {
+			"type": "GEOMETRIC",
+			"maxDelay": 10,
+			"global": 3,
+			"global_delays": {"0": {"0": 5, "1": 5, "2": 5}, "1": {"0": 6, "1": 6, "2": 6}, "2": {"0": 7, "1": 7, "2": 7}}
+		},
+		"topology": {
+			"type": "userList",
+			"initialPeers": 3,
+			"totalPeers": 3,
+			"list": {
+			"0": [ 1, 2 ],
+			"1": [ 2 ]
+			},
+			"maxMsgsRec": 1
+		},
+		"tests": 1,
+		"rounds": 10
+		}
+	]
+}
