@@ -63,6 +63,7 @@ namespace quantas{
         void                                initNetwork         (json, int); // initialize network with peers
         void                                initParameters      (json);
         void                                fullyConnect        (int);
+        void                                fullyConnect_selfLoops(int);
         void                                star                (int);
         void                                grid                (int, int);
         void                                torus               (int, int);
@@ -172,6 +173,9 @@ namespace quantas{
 	    if (topology["type"] == "complete") {
 	        fullyConnect(topology["initialPeers"]);
 	    }
+        else if (topology["type"] == "fullyComplete") {
+            fullyConnect_selfLoops(topology["initialPeers"]);
+        }
         else if (topology["type"] == "star") {
             star(topology["initialPeers"]);
         }
@@ -215,6 +219,20 @@ namespace quantas{
             for (int j = i+1; j < numberOfPeers; j++) {
                 _peers[i]->addNeighbor(_peers[j]->id());
                 _peers[j]->addNeighbor(_peers[i]->id());
+            }
+        }
+    }
+
+    template<class type_msg, class peer_type>
+    void Network<type_msg, peer_type>::fullyConnect_selfLoops(int numberOfPeers) {
+        for (int i = 0; i < numberOfPeers; i++) {
+            // Activate peer
+            for (int j = i; j < numberOfPeers; j++) {
+                if (i == j) _peers[i]->addNeighbor(_peers[j]->id());
+                else{
+                    _peers[i]->addNeighbor(_peers[j]->id());
+                    _peers[j]->addNeighbor(_peers[i]->id());
+                }
             }
         }
     }

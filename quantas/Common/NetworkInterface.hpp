@@ -142,7 +142,7 @@ namespace quantas{
         void                               clearMessages         ();
         void                               pushToOutSteam        (Packet<message> outMsg)                   {_outStream.push_back(outMsg);};
         Packet<message>                    popInStream           ();
-        void                               addNeighbor           (interfaceId neighborIdAdd)                {if (!isNeighbor(neighborIdAdd) && (id() != neighborIdAdd)) _neighbors.push_back(neighborIdAdd);};
+        void                               addNeighbor           (interfaceId neighborIdAdd)                {if (!isNeighbor(neighborIdAdd)) _neighbors.push_back(neighborIdAdd);};
         void                               removeNeighbor        (interfaceId neighborIdToRemove);
         void                               setMaxMsgsRec         (int maxMsgsRec)                           {_maxMsgsRec = maxMsgsRec;}
 
