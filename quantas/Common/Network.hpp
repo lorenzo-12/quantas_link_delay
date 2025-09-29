@@ -209,7 +209,9 @@ namespace quantas{
 	
     template<class type_msg, class peer_type>
     void Network<type_msg, peer_type>::initParameters(json parameters) {
-        _peers[0]->initParameters(_peers, parameters);
+        for (int i = 0; i < _peers.size(); i++) {
+            _peers[i]->initParameters(_peers, parameters);
+        }
     }
 
     template<class type_msg, class peer_type>
