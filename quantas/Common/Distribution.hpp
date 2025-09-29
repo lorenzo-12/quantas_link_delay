@@ -87,7 +87,7 @@ namespace quantas{
         int                                 minDelay            ()const                                         {return _minDelay;};
         string                              type                ()const                                         {return _type;};
         int                                 getDelay(long s, long d);
-        double                              getGlobalDelay      (const std::map<long, std::map<long,double>>& _global_delays, long s, long d);
+        double                              getGlobalDelay      (long s, long d);
 
     };
 
@@ -101,6 +101,7 @@ namespace quantas{
         _minDelay = rhs._minDelay;
         _global   = rhs._global;
         _type = rhs._type;
+        _global_delays = rhs._global_delays;
     }
 
     inline Distribution::~Distribution(){
@@ -163,8 +164,7 @@ namespace quantas{
         }
     }
 
-    inline double Distribution::getGlobalDelay(const std::map<long, std::map<long,double>>& _global_delays, long s, long d) {
-
+    inline double Distribution::getGlobalDelay(long s, long d) {
         // set the default delay that will be used in case the map does not contain the link (source, destination)
         double default_delay = _global;
 
@@ -192,9 +192,9 @@ namespace quantas{
         if (itDestination == itSender->second.end()) {
             return default_delay;  // destination not found
         }
-
+    
         // return the value associated to _global_delays[source][destination]
-        if ((itDestination->second < _maxDelay) && (itDestination->second > _minDelay)) return itDestination->second;
+        if ((itDestination->second <= _maxDelay) && (itDestination->second >= _minDelay)) return itDestination->second;
         else return default_delay; // guard against out of bounds values
     }
     
@@ -212,12 +212,12 @@ namespace quantas{
                 delay = 1;
             }
             if (_type == SPECIFIC){
-                double link_delay = getGlobalDelay(_global_delays, src, dest);
+                double link_delay = getGlobalDelay(src, dest);
                 delay = static_cast<int>(link_delay);
                 return delay; // prevent from infinite loop if maxDelay is lower than delay
             }
             if (_type == GEOMETRIC){
-                double lambda = getGlobalDelay(_global_delays, src, dest);
+                double lambda = getGlobalDelay(src, dest);
                 const double p = 1.0 - exp(-lambda);
                 geometric_distribution<int> geom(p); 
                 delay = 1 + geom(RANDOM_GENERATOR);

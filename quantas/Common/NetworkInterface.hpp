@@ -309,7 +309,7 @@ namespace quantas{
                 interfaceId dest = outMessage.targetId();
                 int delay = _distribution.getDelay(src, dest);
                 outMessage.setDelay(delay);
-                cout << "[transmit] sending message with delay: " << delay << endl;
+                //cout << "[transmit] sending message with delay: " << delay << endl;
                 //int channel_delay = _outBoundChannelDelays.at(outMessage.targetId());
                 //outMessage.setDelay(channel_delay); 
 				_inStream.push_back(outMessage);
@@ -326,7 +326,7 @@ namespace quantas{
                     interfaceId dest = outMessage.targetId();
                     int delay = _distribution.getDelay(src, dest);
                     outMessage.setDelay(delay);
-                    cout << "[transmit] sending message with delay: " << delay << "   " << _distribution.type() << endl;
+                    //cout << "[transmit] sending message with delay: " << delay << "   " << _distribution.type() << endl;
                     //int channel_delay = _outBoundChannelDelays.at(targetId);
                     //outMessage.setDelay(channel_delay); 
                     _outBoundChannels[targetId]->send(outMessage);
