@@ -1,0 +1,31 @@
+{
+	"experiments": [
+		{
+		"algorithm": "example",
+		"logFile": "bracha.txt",
+		"threadCount": 1,
+		"parameters": {
+			"f": 1,
+			"n": 4,
+			"sender": 0,
+			"percentage": 100,
+			"byzantine_nodes": [0]
+		},
+		"distribution": {
+			"type": "SPECIFIC",
+			"maxDelay": 10,
+			"global": 1,
+			"global_delays": {"0": {"0": 1, "1": 1, "2": 1}, "1": {"0": 1, "1": 1, "2": 1}, "2": {"0": 1, "1": 1, "2": 1}}
+		},
+		"topology": {
+			"type": "fullyComplete",
+			"initialPeers": 4,
+			"totalPeers": 4,
+			"list": {},
+			"maxMsgsRec": 1
+		},
+		"tests": 10,
+		"rounds": 10
+		}
+	]
+}

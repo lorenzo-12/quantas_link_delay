@@ -56,13 +56,20 @@ namespace quantas {
 		}
 		cout << endl;
 
-		// Send hello to everyone else
 		if (getRound() == 0){
+			cout << "neighbors of node_" << id() << ": [ ";
+			for (auto const& n : neighbors()){
+				cout << n << ", ";
+			}
+			cout << "]" << endl;
+		}
+
+		// Send hello to everyone else
+		if (getRound() == 0 && id() == 0){
 			ExampleMessage msg;
 			msg.message = "Message: Hello From " + std::to_string(id()) + ". Sent on round: " + std::to_string(getRound());
 			msg.aPeerId = std::to_string(id());
 			broadcast(msg);
-			printf("peer_%ld sending message at round %d\n", id(), getRound());
 		}
 		
 	}

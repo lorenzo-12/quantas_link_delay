@@ -81,6 +81,7 @@ namespace quantas{
         int                                 avgDelay            ()const                                         {return _distribution.avgDelay();};
         int                                 minDelay            ()const                                         {return _distribution.minDelay();};
         string                              type                ()const                                         {return _distribution.type();};
+        vector<Peer<type_msg>*>             peers               ()const                                         {return _peers;};
 
         //mutators
         void                                receive             (int begin, int end);

@@ -62,6 +62,7 @@ You should have received a copy of the GNU General Public License along with QUA
 #include <iomanip>
 #include <algorithm>
 #include <iterator>
+#include <unordered_set>
 #include "Packet.hpp"
 #include "Distribution.hpp"
 
@@ -112,6 +113,7 @@ namespace quantas{
     protected:
         // functions for peer
         void                               broadcast             (message msg);
+        void                               byzantine_broadcast   (message m1, message m2, int percentage, vector<interfaceId> honest_nodes);
         void                               broadcastBut          (message msg, long id);
         void                               unicast               (message msg);
         void                               unicastTo             (message msg, long dest);
@@ -178,6 +180,44 @@ namespace quantas{
             outPacket.setMessage(msg);
             _outStream.push_back(outPacket);
         }
+    }
+
+    template <class message>
+    void NetworkInterface<message>::byzantine_broadcast(message m1, message m2, int percentage, vector<interfaceId> honest_nodes){
+
+        vector<interfaceId> group_1;
+        vector<interfaceId> group_2;
+
+        if (percentage < 0) percentage = 0;
+        if (percentage > 100) percentage = 100;
+        if (honest_nodes.empty()) return;
+
+        vector<interfaceId> shuffled = honest_nodes;
+        shuffle(shuffled.begin(), shuffled.end(), RANDOM_GENERATOR);
+
+        const size_t total = shuffled.size();
+        const size_t k = static_cast<size_t>(
+            (static_cast<double>(percentage) / 100.0) * static_cast<double>(total)
+        );
+        group_1.insert(group_1.end(), shuffled.begin(), shuffled.begin() + k);
+        group_2.insert(group_2.end(), shuffled.begin() + k, shuffled.end());
+        
+        for(auto it = group_1.begin(); it != group_1.end(); it++){
+            Packet<message> outPacket = Packet<message>(-1);
+            outPacket.setSource(id());
+            outPacket.setTarget(*it);
+            outPacket.setMessage(m1);
+            _outStream.push_back(outPacket);
+        }
+
+        for(auto it = group_2.begin(); it != group_2.end(); it++){
+            Packet<message> outPacket = Packet<message>(-1);
+            outPacket.setSource(id());
+            outPacket.setTarget(*it);
+            outPacket.setMessage(m2);
+            _outStream.push_back(outPacket);
+        }
+
     }
 
     // Send to all neighbors except id

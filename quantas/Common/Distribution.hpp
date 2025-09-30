@@ -134,7 +134,7 @@ namespace quantas{
                 _type = ONE;
             }
             else if (type == SPECIFIC){
-                cout << "[Distribution] Setting SPECIFIC distribution" << endl;
+                //cout << "[Distribution] Setting SPECIFIC distribution" << endl;
                 _type = SPECIFIC;
 
                 map<long,map<long,double>> dict;
@@ -148,7 +148,7 @@ namespace quantas{
                 _global_delays = dict;
             }
             else if (type == GEOMETRIC){
-                cout << "[Distribution] Setting GEOMETRIC distribution" << endl;
+                //cout << "[Distribution] Setting GEOMETRIC distribution" << endl;
                 _type = GEOMETRIC;
                 
                 map<long,map<long,double>> dict;

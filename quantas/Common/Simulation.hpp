@@ -28,6 +28,99 @@ using std::ofstream;
 using std::thread;
 
 namespace quantas {
+
+	class ResultCollector {
+	public: 
+		int n = 0;
+		int f = 0;
+		int c = 0;
+		int p = 0;
+		
+		vector<double> avg_delivery_nodes;
+		vector<double> avg_delivery_time;
+		vector<double> avg_disagreement;
+
+		void setParameters(int _n, int _f, int _p){
+			n = _n;
+			f = _f;
+			c = n - f;
+			p = _p;
+			cout << "n=" << n << ", f=" << f << ", c=" << c << ", p=" << p << endl;
+		}
+	
+		void addResult(vector<int> final_values, vector<int> final_times){
+			int counter_node_terminated = 0;
+			int sum_delivery_time = 0;
+			int counter_vote_0 = 0;
+			int counter_vote_1 = 0;
+			for (int i=0; i<final_values.size(); i++){
+				int v = final_values[i];
+				int t = final_times[i];
+				if (v != -1) counter_node_terminated++;
+				if (v == 0) counter_vote_0++;
+				if (v == 1) counter_vote_1++;
+				if (t != -1) sum_delivery_time += t;
+			}
+			
+			if (sum_delivery_time==0 || counter_node_terminated==0){
+				avg_delivery_nodes.push_back(0);
+				avg_delivery_time.push_back(0);
+				avg_disagreement.push_back(0);
+			}
+			else{
+				avg_delivery_nodes.push_back((double)counter_node_terminated *100 / c);
+				avg_delivery_time.push_back((double)sum_delivery_time / c);
+				int dis = (counter_vote_0+counter_vote_1) - abs(counter_vote_0 - counter_vote_1);
+				avg_disagreement.push_back((double)dis *100/ c);
+			}
+			
+		}
+
+		vector<double> collectResults(){
+			double sum_delivery = 0;
+			double sum_delivery_time = 0;
+			double sum_disagreement = 0;
+			double final_avg_delivery = 0;
+			double final_avg_delivery_time = 0;
+			double final_avg_disagreement = 0;
+			int counter = 0;
+			for (int i=0; i<avg_delivery_nodes.size(); i++){
+				double x = avg_delivery_nodes[i];
+				double y = avg_delivery_time[i];
+				double z = avg_disagreement[i];
+
+				if (x!=0 && y != 0){
+					sum_delivery += x;
+					sum_delivery_time += y;
+					sum_disagreement += z;
+					counter++;
+				}
+			}
+
+			if (counter==0) return {0, 0, 0};
+
+			final_avg_delivery = sum_delivery / counter;
+			final_avg_delivery_time = sum_delivery_time / counter;
+			final_avg_disagreement = sum_disagreement / counter;
+
+			return {final_avg_delivery, final_avg_delivery_time, final_avg_disagreement};
+		}
+
+		json getResults(){
+			json results;
+			vector<double> results_collected = collectResults();
+			results["n"] = n;
+			results["f"] = f;
+			results["c"] = c;
+			results["p"] = p;
+			results["avg_delivery"] = results_collected[0];
+			results["avg_delivery_time"] = results_collected[1];
+			results["avg_disagreement"] = results_collected[2];
+			return results;
+		}
+
+	};
+
 	class SimWrapper {
 	public:
     	virtual void run(json) = 0;
@@ -74,6 +167,9 @@ namespace quantas {
 		int networkSize = static_cast<int>(config["topology"]["totalPeers"]);
 		
 		BS::thread_pool pool(_threadCount);
+		ResultCollector rc;
+		rc.setParameters(config["parameters"]["n"], config["parameters"]["f"], config["parameters"]["percentage"]);
+		
 		for (int i = 0; i < config["tests"]; i++) {
 			LogWriter::instance()->setTest(i);
 
@@ -102,11 +198,27 @@ namespace quantas {
 				BS::multi_future<void> transmit_loop = pool.parallelize_loop(networkSize, [this](int a, int b){system.transmit(a, b);});
 				transmit_loop.wait();
 			}
+
+			
+			vector<int> final_values;
+			vector<int> final_times;
+			for (auto const& p : system.peers()){
+				auto bp = dynamic_cast<peer_type*>(p);
+				final_values.push_back(bp->final_value);
+				final_times.push_back(bp->finished_round);
+			}
+			rc.addResult(final_values, final_times);
+
+			cout << "Test " << i + 1 << " completed." << endl;
+
 		}
+
+		json results = rc.getResults();
 		
 		endTime = std::chrono::high_resolution_clock::now();
    		duration = endTime - startTime;
 		LogWriter::instance()->data["RunTime"] = duration.count();
+		LogWriter::instance()->data["Results"] = results;
 
 		LogWriter::instance()->print();
 		out.close();

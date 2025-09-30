@@ -1,0 +1,12 @@
+{
+    "Results": {
+        "avg_delivery": 100.0,
+        "avg_delivery_time": 3.269375,
+        "avg_disagreement": 0.0,
+        "c": 80,
+        "f": 20,
+        "n": 100,
+        "p": 80
+    },
+    "RunTime": 18.933751708
+}
