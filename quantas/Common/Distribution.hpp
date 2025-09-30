@@ -36,6 +36,13 @@ namespace quantas{
     extern thread_local default_random_engine RANDOM_GENERATOR;
 
     // convenience function for using the random number generator to get a
+    // random double in the range [min, max]
+    double uniformDouble(const double min, const double max);
+
+    // round a double to a certain number of decimal places
+    double roundToDecimals(double v, int decimals);
+
+    // convenience function for using the random number generator to get a
     // random int in the range [min, max]
     int uniformInt(const int min, const int max);
 
@@ -62,15 +69,15 @@ namespace quantas{
         int                                 _maxDelay = 1;
         int                                 _minDelay = 1;
         string                              _type = UNIFORM;
-        map<long,map<long,double>>          _global_delays;
-        double                              _global = 1;
+        map<long,map<long,double>>          _links_delay;
+        double                              _global_delay = 1;
 
     public:
         Distribution                                                 () {
             _avgDelay = 1;
             _maxDelay = 1;
             _minDelay = 1;
-            _global   = 1;
+            _global_delay   = 1;
             _type = UNIFORM;
         }
 
@@ -99,9 +106,9 @@ namespace quantas{
         _avgDelay = rhs._avgDelay;
         _maxDelay = rhs._maxDelay;
         _minDelay = rhs._minDelay;
-        _global   = rhs._global;
+        _global_delay = rhs._global_delay;
         _type = rhs._type;
-        _global_delays = rhs._global_delays;
+        _links_delay = rhs._links_delay;
     }
 
     inline Distribution::~Distribution(){
@@ -118,8 +125,8 @@ namespace quantas{
         if (distribution.contains("minDelay")) {
             _minDelay = distribution["minDelay"];
         }
-        if (distribution.contains("global")){
-            _global = distribution["global"];
+        if (distribution.contains("global_delay")){
+            _global_delay = distribution["global_delay"];
         }
 
         if (distribution.contains("type")) {
@@ -138,35 +145,51 @@ namespace quantas{
                 _type = SPECIFIC;
 
                 map<long,map<long,double>> dict;
-                if (distribution.contains("global_delays")){
-                    for (auto& [i,val] : distribution["global_delays"].items()){
+                if (distribution.contains("links_delay")){
+                    for (auto& [i,val] : distribution["links_delay"].items()){
                         for (auto& [j,delay] : val.items()){
                             dict[stol(i)][stol(j)] = delay;
                         }
                     }
                 }
-                _global_delays = dict;
+                _links_delay = dict;
             }
             else if (type == GEOMETRIC){
                 //cout << "[Distribution] Setting GEOMETRIC distribution" << endl;
                 _type = GEOMETRIC;
-                
-                map<long,map<long,double>> dict;
-                if (distribution.contains("global_delays")){
-                    for (auto& [i,val] : distribution["global_delays"].items()){
-                        for (auto& [j,delay] : val.items()){
-                            dict[stol(i)][stol(j)] = delay;
+
+                if (distribution.contains("global_delays_setting")){
+                    if (distribution["global_delays_setting"] == "uniform"){
+                        double min_lambda = distribution["min_lambda"];
+                        double max_lambda = distribution["max_lambda"];
+                        int n = distribution["n"];
+                        map<long,map<long,double>> dict;
+                        for (int i = 0; i < n; i++){
+                            for (int j = 0; j < n; j++){
+                                dict[i][j] = uniformDouble(min_lambda, max_lambda);
+                            }
                         }
+                        _links_delay = dict;
+                    }
+                    if (distribution["global_delays_setting"] == "personalized"){
+                        map<long,map<long,double>> dict;
+                        for (auto& [i,val] : distribution["links_delay"].items()){
+                            for (auto& [j,delay] : val.items()){
+                                dict[stol(i)][stol(j)] = delay;
+                            }
+                        }
+                        _links_delay = dict;
                     }
                 }
-                _global_delays = dict;
+                
+                
             }
         }
     }
 
     inline double Distribution::getGlobalDelay(long s, long d) {
         // set the default delay that will be used in case the map does not contain the link (source, destination)
-        double default_delay = _global;
+        double default_delay = _global_delay;
 
         // guard against default_delay being out of bounds
         if (default_delay > _maxDelay) {
@@ -176,14 +199,14 @@ namespace quantas{
             default_delay = static_cast<double>(_minDelay);
         }
 
-        // if map is empy return 
-        if (_global_delays.empty()) {
+        // if map is empy return default_delay
+        if (_links_delay.empty()) {
             return default_delay;
         }
 
-        // if the source is not in the map return 
-        auto itSender = _global_delays.find(s);
-        if (itSender == _global_delays.end()) {
+        // if the source is not in the map return default_delay
+        auto itSender = _links_delay.find(s);
+        if (itSender == _links_delay.end()) {
             return default_delay;  // source not found
         }
 

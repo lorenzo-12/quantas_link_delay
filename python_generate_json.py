@@ -8,7 +8,7 @@ dir_file_json = pathlib.Path(__file__).parent / "quantas"
 base_file = pathlib.Path(__file__).parent / "base.json"
 results_dir = pathlib.Path(__file__).parent / "results"
 
-alg_list = [("bracha","BrachaPeer")]
+alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer")]
 n_list = [100]
 f_list = [20, 30, 35, 40, 45, 50]
 p_list = [100, 90, 80, 70, 60, 50]
@@ -24,7 +24,7 @@ def getByzantineVector(n,f):
 def getByzantineSender(vec):
     return random.choice(vec)
 
-def getGlobalDelays(n):
+def getGlobalDelays_equal(n):
     x = []
     for i in range(1,21):
         for j in range(n*n//20):
@@ -39,6 +39,15 @@ def getGlobalDelays(n):
         for j in range(n):
             delays[str(i)][str(j)] = x[counter]
             counter += 1
+    return delays
+
+def getGlobalDelays_distribution(n):
+    delays = {}
+    counter = 0
+    for i in range(n):
+        delays[str(i)] = {}
+        for j in range(n):
+            delays[str(i)][str(j)] = round(random.uniform(0.05, 2.0),2)
     return delays
 
 experiments = {} 
@@ -71,8 +80,13 @@ for alg, alg_class in alg_list:
                 distribution["type"] = "GEOMETRIC"
                 #distribution["type"] = "UNIFORM"
                 distribution["maxDelay"] = 10
-                distribution["global"] = 5
-                distribution["global_delays"] = getGlobalDelays(n) 
+                distribution["global_delay"] = 5
+                distribution["global_delays_setting"] = "uniform"
+                distribution["min_lambda"] = 0.05
+                distribution["max_lambda"] = 2.0
+                distribution["n"] = n
+                distribution["links_delay"] = {}
+                #distribution["links_delay"] = getGlobalDelays_distribution(n) 
                 
                 topology = exp["topology"]
                 topology["type"] = "fullyComplete"
@@ -88,7 +102,7 @@ for alg, alg_class in alg_list:
                     
                 experiments["experiments"].append(exp)
 
-file_name = f"bracha.json"
-file_path = dir_file_json / alg_class / file_name       
-with open(file_path, 'w') as f:
-    json.dump(experiments, f, indent=4)
+    file_name = f"{alg}.json"
+    file_path = dir_file_json / alg_class / file_name       
+    with open(file_path, 'w') as f:
+        json.dump(experiments, f, indent=4)

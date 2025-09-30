@@ -7,6 +7,19 @@ thread_local default_random_engine RANDOM_GENERATOR = default_random_engine(
     static_cast<int>(clock()) + _hasher(std::this_thread::get_id())
 );
 
+double uniformDouble(double min, double max) {
+    static thread_local std::mt19937 generator(
+        clock() + _hasher(std::this_thread::get_id())
+    );
+    std::uniform_real_distribution<double> dist(min, max);
+    return dist(generator);
+}
+
+double roundToDecimals(double v, int decimals) {
+    const double f = std::pow(10.0, decimals);
+    return std::round(v * f) / f;
+}
+
 int uniformInt(const int min, const int max) {
     static thread_local std::mt19937 generator(
         clock() + _hasher(std::this_thread::get_id())

@@ -35,9 +35,7 @@ namespace quantas{
     class BrachaPeer : public Peer<BrachaMessage>{
     public:
 
-        int echo_threshold;
-        int ready_threshold;
-        int delivery_threshold;
+        // ----------- Result parameters -----------
         bool is_byzantine;
         long sender;
         int percentage;
@@ -45,7 +43,12 @@ namespace quantas{
 
         int finished_round = -1;
         int final_value = -1;
+        // -----------------------------------------
 
+        // ----- Algorithm specific parameters -----
+        int echo_threshold;
+        int ready_threshold;
+        int delivery_threshold;
         bool sent_echo = false;
         bool sent_ready = false;
         bool delivered = false;
@@ -55,6 +58,8 @@ namespace quantas{
         int check_echo();
         int check_ready();
         int check_delivery();
+        // -----------------------------------------
+
 
         // methods that must be defined when deriving from Peer
         BrachaPeer                             (long);
