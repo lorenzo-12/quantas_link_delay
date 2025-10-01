@@ -28,6 +28,8 @@ ALGFILE := Alg24Peer
 #ALGFILE := ImbsRaynalPeer
 #INPUTFILE := alg24.json
 #ALGFILE := Alg24Peer
+#INPUTFILE := alg23.json
+#ALGFILE := Alg23Peer
 
 # INPUTFILE := BitcoinInput.json
 

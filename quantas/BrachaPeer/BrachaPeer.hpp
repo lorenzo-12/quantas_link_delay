@@ -43,6 +43,7 @@ namespace quantas{
 
         int finished_round = -1;
         int final_value = -1;
+        bool debug_prints;
         // -----------------------------------------
 
         // ----- Algorithm specific parameters -----

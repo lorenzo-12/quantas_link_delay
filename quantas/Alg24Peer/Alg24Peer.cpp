@@ -41,6 +41,9 @@ namespace quantas {
 		for (int i = 0; i<n; i++){
 			if (parameters["byzantine_nodes"][i] == 0) honest_nodes.push_back(i);
 		}
+
+		debug_prints = false;
+		if (parameters.contains("debug_prints")) debug_prints = parameters["debug_prints"];
 		
 		ack_delivery_threshold = n-f-1;
 		ack_vote1_threshold = n-2*f;
@@ -50,6 +53,7 @@ namespace quantas {
 
 		// reset algorithm specific variables
 		delivered = false;
+		is_first_propose = true;
 		ack_sent = false;
 		vote1_sent = false;
 		vote2_sent = false;
@@ -64,43 +68,64 @@ namespace quantas {
 
 	void Alg24Peer::performComputation() {
 
+		// ------------------------------ STEP 1: Propose -----------------------------------------
 		if (is_byzantine && getRound() == 0 && id() == sender) {
+			Alg24Message m0;
+			m0.type = "propose";
+			m0.source = id();
+			m0.value = 0;
+
 			Alg24Message m1;
 			m1.type = "propose";
 			m1.source = id();
-			m1.value = 0;
-
-			Alg24Message m2;
-			m2.type = "propose";
-			m2.source = id();
-			m2.value = 1;
-			byzantine_broadcast(m1, m2, percentage, honest_nodes);
-			cout << " sent byzantine propose messages" << endl;
+			m1.value = 1;
+			byzantine_broadcast(m0, m1, percentage, honest_nodes);
+			if (debug_prints) cout << " sent byzantine propose messages" << endl;
 		}
+
+		if (!is_byzantine && getRound() == 0 && id() == sender) {
+			Alg24Message m0;
+			m0.type = "propose";
+			m0.source = id();
+			m0.value = 0;
+			broadcast(m0);
+			if (debug_prints) cout << " sent honest propose message" << endl;
+		}
+		// ----------------------------------------------------------------------------------------
 
 		if (is_byzantine) {
 			// Byzantine nodes do nothing else
 			return;
 		}
 
-		cout << "node_" << id() << " -------------------------------------" << endl;
+		if (delivered) {
+			// Once delivered, do nothing
+			return;
+		}
+
+		if (debug_prints) cout << "node_" << id() << " -------------------------------------" << endl;
 		while (!inStreamEmpty()) {
 			Packet<Alg24Message> newMsg = popInStream();
 			Alg24Message m = newMsg.getMessage();
 			addMsg(m);
-			printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
+			if (debug_prints) printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
 			
-			if (m.type == "propose"){
+			// ------------------------------ STEP 2: Ack -----------------------------------------
+			if (m.type == "propose" && is_first_propose) {
 				Alg24Message ack_msg;
 				ack_msg.type = "ack";
 				ack_msg.source = id();
 				ack_msg.value = m.value;
 				broadcast(ack_msg);
 				ack_sent = true;
-				printf("--> (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
+				if (debug_prints) printf("--> (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
 			}
+			// ------------------------------------------------------------------------------------
 
 			if (m.type == "ack"){
+
+
+				// ------------------------------ STEP 3: 2-Round Commit --------------------------
 				if ((count(ack_msgs, m.value) >= ack_delivery_threshold) && (delivered == false)){
 					Alg24Message vote1_msg;
 					vote1_msg.type = "vote1";
@@ -108,7 +133,7 @@ namespace quantas {
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
 					vote1_sent = true;
-					printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 
 					Alg24Message vote2_msg;
 					vote2_msg.type = "vote2";
@@ -116,14 +141,17 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
-					cout << " DELIVERED value " << final_value << endl;
+					if (debug_prints) cout << " DELIVERED value " << final_value << endl;
 				}
+				// --------------------------------------------------------------------------------
 
+
+				// ------------------------------ STEP 4.1: Ack -> Vote1 --------------------------
 				if ((count(ack_msgs, m.value) >= ack_vote1_threshold) && (vote1_sent == false)){
 					Alg24Message vote1_msg;
 					vote1_msg.type = "vote1";
@@ -131,10 +159,12 @@ namespace quantas {
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
 					vote1_sent = true;
-					printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 				}
+				// --------------------------------------------------------------------------------
 			}
 
+			// ------------------------------ STEP 4.2: Vote1 -> Vote2 ----------------------------
 			if (m.type == "vote1"){
 				if ((count(vote1_msgs, m.value) >= vote1_vote2_threshold) && (vote2_sent == false)){
 					Alg24Message vote2_msg;
@@ -143,11 +173,14 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}
 			}
+			// ------------------------------------------------------------------------------------
+
 
 			if (m.type == "vote2"){
+				// ------------------------------ STEP 4.3: Vote2 -> Vote2 ------------------------
 				if ((count(vote2_msgs, m.value) >= vote2_vote2_threshold) && (vote2_sent == false)){
 					Alg24Message vote2_msg;
 					vote2_msg.type = "vote2";
@@ -155,42 +188,45 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}
+				// --------------------------------------------------------------------------------
 
+
+				// ------------------------------ STEP 5: Commit ----------------------------------
 				if ((count(vote2_msgs, m.value) >= vote2_delivery_threshold) && (delivered == false)){
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
-					cout << " DELIVERED value " << final_value << endl;
+					if (debug_prints) cout << " DELIVERED value " << final_value << endl;
 				}
+				// --------------------------------------------------------------------------------
 			}
 			
 		}
 
-		cout << " ack_msgs: [";
-		for (const auto& p : ack_msgs) {
-			cout << "(" << p.first << "," << p.second << ") ";
+		if (debug_prints) {
+			cout << " ack_msgs: [";
+			for (const auto& p : ack_msgs) {
+				cout << "(" << p.first << "," << p.second << ") ";
+			}
+			cout << "]" << endl;
+			cout << " vote1_msgs: [";
+			for (const auto& p : vote1_msgs) {
+				cout << "(" << p.first << "," << p.second << ") ";
+			}
+			cout << "]" << endl;
+			cout << " vote2_msgs: [";
+			for (const auto& p : vote2_msgs) {
+				cout << "(" << p.first << "," << p.second << ") ";
+			}
+			cout << "]" << endl;
+			cout << "--------------------------------------------" << endl << endl;
 		}
-		cout << "]" << endl;
-		cout << " vote1_msgs: [";
-		for (const auto& p : vote1_msgs) {
-			cout << "(" << p.first << "," << p.second << ") ";
-		}
-		cout << "]" << endl;
-		cout << " vote2_msgs: [";
-		for (const auto& p : vote2_msgs) {
-			cout << "(" << p.first << "," << p.second << ") ";
-		}
-		cout << "]" << endl;
-		cout << "--------------------------------------------" << endl << endl;
-		
-		
-		
 	}
 
 	void Alg24Peer::endOfRound(const vector<Peer<Alg24Message>*>& _peers) {
-		cout << "-------------------------------------------------- End of round " << getRound() << "--------------------------------------------------" << endl << endl;
+		if (debug_prints) cout << "-------------------------------------------------- End of round " << getRound() << "--------------------------------------------------" << endl << endl;
 	}
 
 	Simulation<quantas::Alg24Message, quantas::Alg24Peer>* generateSim() {

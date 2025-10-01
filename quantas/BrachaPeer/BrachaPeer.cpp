@@ -45,6 +45,9 @@ namespace quantas {
 		for (int i = 0; i<n; i++){
 			if (parameters["byzantine_nodes"][i] == 0) honest_nodes.push_back(i);
 		}
+
+		debug_prints = false;
+		if (parameters.contains("debug_prints")) debug_prints = parameters["debug_prints"];
 		
 		echo_threshold = static_cast<int>(std::ceil((n + f + 1) / 2.0));
 		ready_threshold = f + 1;
@@ -62,29 +65,42 @@ namespace quantas {
 
 	void BrachaPeer::performComputation() {
 
+		// ------------------------------ STEP 0: Init --------------------------------------------
 		if (is_byzantine && getRound() == 0 && id() == sender) {
+			BrachaMessage m0;
+			m0.source = id();
+			m0.type = "send";
+			m0.value = 0;
+
 			BrachaMessage m1;
 			m1.source = id();
 			m1.type = "send";
-			m1.value = 0; 
+			m1.value = 1;
 
-			BrachaMessage m2;
-			m2.source = id();
-			m2.type = "send";
-			m2.value = 1;
-
-			byzantine_broadcast(m1, m2, percentage, honest_nodes);
+			byzantine_broadcast(m0, m1, percentage, honest_nodes);
+			if (debug_prints) cout << " sent byzantine send messages" << endl;
 		}
+
+		if (!is_byzantine && getRound() == 0 && id() == sender) {
+			BrachaMessage m0;
+			m0.source = id();
+			m0.type = "send";
+			m0.value = 0;
+			broadcast(m0);
+			if (debug_prints) cout << " sent honest send messages" << endl;
+		}
+		// ----------------------------------------------------------------------------------------
 
 		if (is_byzantine) {
 			// Byzantine nodes do nothing else
 			return;
 		}
 		
-
+		if (debug_prints) cout << "node_" << id() << " -------------------------------------" << endl;
 		while (!inStreamEmpty()) {
 			Packet<BrachaMessage> newMsg = popInStream();
 			BrachaMessage m = newMsg.getMessage();
+			if (debug_prints) printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
 			
 			if (m.type == "echo"){
 				echo_msgs[m.source] = m.value;
@@ -93,67 +109,74 @@ namespace quantas {
 				ready_msgs[m.source] = m.value;
 			}
 			
-			if (sent_echo == false && m.type == "send"){
-				//printf("Node_%ld: <-- (%ld, %s, %d)\n", id(), m.source, m.type.c_str(), m.value);
-				sent_echo = true;
-				BrachaMessage send_m;
-				send_m.source = id();
-				send_m.type = "echo";
-				send_m.value = m.value;
-				broadcast(send_m);
-				//printf("Node_%ld: --> (%s, %d)\n", id(), send_m.type.c_str(), send_m.value);
-			}
 
+			// ------------------------------ STEP 1: ECHO Phase ----------------------------------
+			if (sent_echo == false && m.type == "send"){
+				sent_echo = true;
+				BrachaMessage echo_m;
+				echo_m.source = id();
+				echo_m.type = "echo";
+				echo_m.value = m.value;
+				broadcast(echo_m);
+				if (debug_prints) printf("--> (%s, %ld, %d)\n", echo_m.type.c_str(), echo_m.source, echo_m.value);
+			}
+			// ------------------------------------------------------------------------------------
+
+
+			// ------------------------------ STEP 2: READY Phase ---------------------------------
 			int echo_val = check_echo();
 			if (sent_ready == false && echo_val != -1){
-				//printf("Node_%ld: (echo threshold met for value %d)\n", id(), echo_val);
 				sent_ready = true;
-				BrachaMessage m;
-				m.source = id();
-				m.type = "ready";
-				m.value = echo_val;
-				broadcast(m);
-				//printf("Node_%ld: --> (%s, %d)\n", id(), m.type.c_str(), m.value);
+				BrachaMessage ready_msg;
+				ready_msg.source = id();
+				ready_msg.type = "ready";
+				ready_msg.value = echo_val;
+				broadcast(ready_msg);
+				if (debug_prints) printf("--> (%s, %ld, %d)\n", ready_msg.type.c_str(), ready_msg.source, ready_msg.value);
 			}
 
 			int ready_val = check_ready();
 			if (sent_ready == false && ready_val != -1){
-				//printf("Node_%ld: (ready threshold met for value %d)\n", id(), ready_val);
 				sent_ready = true;
-				BrachaMessage m;
-				m.source = id();
-				m.type = "ready";
-				m.value = ready_val;
-				broadcast(m);
-				//printf("Node_%ld: --> (%s, %d)\n", id(), m.type.c_str(), m.value);
+				BrachaMessage ready_msg;
+				ready_msg.source = id();
+				ready_msg.type = "ready";
+				ready_msg.value = ready_val;
+				broadcast(ready_msg);
+				if (debug_prints) printf("--> (%s, %ld, %d)\n", ready_msg.type.c_str(), ready_msg.source, ready_msg.value);
 			}
+			// ------------------------------------------------------------------------------------
 
+			
+			// ------------------------------ STEP 3: Deliver -------------------------------------
 			int deliver_val = check_delivery();
 			if (delivered == false && deliver_val != -1){
-				//printf("Node_%ld: (delivery threshold met for value %d)\n", id(), deliver_val);
 				delivered = true;
 				finished_round = getRound();
 				final_value = deliver_val;
+				if (debug_prints) cout << " DELIVERED value " << final_value << endl;
 			}
+			// ------------------------------------------------------------------------------------
 
 		}
-		/*
-       	cout << "Node_" << id() << " echo_msgs:  [";
-		for (auto const& p : echo_msgs){
-			cout << p.second << ", ";
+		
+		if (debug_prints) {
+			cout << "Node_" << id() << " echo_msgs:  [";
+			for (auto const& p : echo_msgs){
+				cout << p.second << ", ";
+			}
+			cout << "]" << endl;
+			cout << "Node_" << id() << " ready_msgs: [";
+			for (auto const& p : ready_msgs){
+				cout << p.second << ", ";
+			}
+			cout << "]" << endl;
+			cout << "--------------------------------------------" << endl << endl;
 		}
-		cout << "]" << endl;
-		cout << "Node_" << id() << " ready_msgs: [";
-		for (auto const& p : ready_msgs){
-			cout << p.second << ", ";
-		}
-		cout << "]" << endl;
-		cout << endl;
-		*/
 	}
 
 	void BrachaPeer::endOfRound(const vector<Peer<BrachaMessage>*>& _peers) {
-		//cout << "End of round " << getRound() << endl;
+		if (debug_prints) cout << "End of round " << getRound() << endl;
 	}
 
 	Simulation<quantas::BrachaMessage, quantas::BrachaPeer>* generateSim() {

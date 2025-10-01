@@ -41,6 +41,9 @@ namespace quantas {
 		for (int i = 0; i<n; i++){
 			if (parameters["byzantine_nodes"][i] == 0) honest_nodes.push_back(i);
 		}
+
+		debug_prints = false;
+		if (parameters.contains("debug_prints")) debug_prints = parameters["debug_prints"];
 		
 		witness_threshold = n -2*f;
 		delivery_threshold = n-f;
@@ -56,31 +59,43 @@ namespace quantas {
 
 	void ImbsRaynalPeer::performComputation() {
 
+		// ------------------------------ STEP 0: Init --------------------------------------------
 		if (is_byzantine && getRound() == 0 && id() == sender) {
+			ImbsRaynalMessage m0;
+			m0.type = "init";
+			m0.source = id();
+			m0.value = 0;
+
 			ImbsRaynalMessage m1;
 			m1.type = "init";
 			m1.source = id();
-			m1.value = 0;
-
-			ImbsRaynalMessage m2;
-			m2.type = "init";
-			m2.source = id();
-			m2.value = 1;
-			byzantine_broadcast(m1, m2, percentage, honest_nodes);
-			//cout << " sent byzantine init messages" << endl;
+			m1.value = 1;
+			byzantine_broadcast(m0, m1, percentage, honest_nodes);
+			cout << " sent byzantine init messages" << endl;
 		}
+
+		if (!is_byzantine && getRound() == 0 && id() == sender) {
+			ImbsRaynalMessage m0;
+			m0.type = "init";
+			m0.source = id();
+			m0.value = 0;
+			broadcast(m0);
+			cout << " sent honest init messages" << endl;
+		}
+		// ----------------------------------------------------------------------------------------
 
 		if (is_byzantine) {
 			// Byzantine nodes do nothing else
 			return;
 		}
 
-		//cout << "node_" << id() << " -------------------------------------" << endl;
+		if (debug_prints) cout << "node_" << id() << " -------------------------------------" << endl;
 		while (!inStreamEmpty()) {
 			Packet<ImbsRaynalMessage> newMsg = popInStream();
 			ImbsRaynalMessage m = newMsg.getMessage();
-			//printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
+			if (debug_prints) printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
 		
+			// ------------------------------ STEP 1.1: Witness -----------------------------------
 			if (m.type == "init"){
 				if (!contains(received_init, m.source) && !contains(broadcast_witness, m.source)) {
 					broadcast_witness.push_back(make_pair(m.source, m.value));
@@ -89,45 +104,54 @@ namespace quantas {
 					msg.source = m.source;
 					msg.value = m.value;
 					broadcast(msg);
-					//printf("--> (%s, %ld, %d)\n", msg.type.c_str(), msg.source, msg.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", msg.type.c_str(), msg.source, msg.value);
 				}
 				received_init.push_back(make_pair(m.source, m.value));
 			}
+			// ------------------------------------------------------------------------------------
 
 			if (m.type == "witness"){
+				// ------------------------------ STEP 1.2: Witness -------------------------------
 				received_witness.push_back(make_pair(m.source, m.value));
 				if( (check_witness(m.source, m.value)!=-1) && (!contains(broadcast_witness, m.source, m.value))) {
 					broadcast_witness.push_back(make_pair(m.source, m.value));
 					broadcast(m);
-					//printf("--> (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
+					if (debug_prints) printf("--> (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
 				}
+				// --------------------------------------------------------------------------------
+
+
+				// ------------------------------ STEP 2: Delivery --------------------------------
 				if ((check_delivery(m.source, m.value)!=-1) && (delivered==false)) {
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
-					//cout << " DELIVERED value " << final_value << " in round " << finished_round << endl;
+					if (debug_prints) cout << " DELIVERED value " << final_value << " in round " << finished_round << endl;
 				}
+				// --------------------------------------------------------------------------------
 			}
 		}
 
-		/*
-		cout << "  received_init: [";
-		for (const auto& p : received_init) {
-			cout << "(" << p.first << "," << p.second << "), ";
+		if (debug_prints) {
+			cout << "  received_init: [";
+			for (const auto& p : received_init) {
+				cout << "(" << p.first << "," << p.second << "), ";
+			}
+			cout << "]" << endl;
+			cout << "  received_witness: [";
+			for (const auto& p : received_witness) {
+				cout << "(" << p.first << "," << p.second << "), ";
+			}
+			cout << "]" << endl;
+			cout << "  broadcast_witness: [";
+			for (const auto& p : broadcast_witness) {
+				cout << "(" << p.first << "," << p.second << "), ";
+			}
+			cout << "]" << endl;
+			cout << "--------------------------------------------" << endl << endl;
 		}
-		cout << "]" << endl;
-		cout << "  received_witness: [";
-		for (const auto& p : received_witness) {
-			cout << "(" << p.first << "," << p.second << "), ";
-		}
-		cout << "]" << endl;
-		cout << "  broadcast_witness: [";
-		for (const auto& p : broadcast_witness) {
-			cout << "(" << p.first << "," << p.second << "), ";
-		}
-		cout << "]" << endl;
-		cout << "--------------------------------------------" << endl << endl;
-		*/
+			
+		
 
 	}
 

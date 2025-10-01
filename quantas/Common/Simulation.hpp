@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License along with QUA
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include <any>
 
 #include "Network.hpp"
 #include "LogWriter.hpp"
@@ -39,6 +40,7 @@ namespace quantas {
 		vector<double> avg_delivery_nodes;
 		vector<double> avg_delivery_time;
 		vector<double> avg_disagreement;
+		vector<double> termination_rate;
 
 		void setParameters(int _n, int _f, int _p){
 			n = _n;
@@ -66,28 +68,33 @@ namespace quantas {
 				avg_delivery_nodes.push_back(0);
 				avg_delivery_time.push_back(0);
 				avg_disagreement.push_back(0);
+				termination_rate.push_back(0);
 			}
 			else{
 				avg_delivery_nodes.push_back((double)counter_node_terminated *100 / c);
 				avg_delivery_time.push_back((double)sum_delivery_time / c);
 				int dis = (counter_vote_0+counter_vote_1) - abs(counter_vote_0 - counter_vote_1);
 				avg_disagreement.push_back((double)dis *100/ c);
+				termination_rate.push_back(1);
 			}
 			
 		}
 
-		vector<double> collectResults(){
+		vector<any> collectResults(){
 			double sum_delivery = 0;
 			double sum_delivery_time = 0;
 			double sum_disagreement = 0;
 			double final_avg_delivery = 0;
 			double final_avg_delivery_time = 0;
 			double final_avg_disagreement = 0;
+			int termination_sum = 0;
+			string termination_percentage;
 			int counter = 0;
 			for (int i=0; i<avg_delivery_nodes.size(); i++){
 				double x = avg_delivery_nodes[i];
 				double y = avg_delivery_time[i];
 				double z = avg_disagreement[i];
+				termination_sum += termination_rate[i];
 
 				if (x!=0 && y != 0){
 					sum_delivery += x;
@@ -97,25 +104,27 @@ namespace quantas {
 				}
 			}
 
-			if (counter==0) return {0, 0, 0};
+			if (counter==0) return {0, 0, 0, "0% (0/0)"};
 
 			final_avg_delivery = sum_delivery / counter;
 			final_avg_delivery_time = sum_delivery_time / counter;
 			final_avg_disagreement = sum_disagreement / counter;
-
-			return {final_avg_delivery, final_avg_delivery_time, final_avg_disagreement};
+			double tp = (double)termination_sum *100 / termination_rate.size();
+			termination_percentage = to_string(tp)+"% ("+to_string(termination_sum)+"/"+to_string(termination_rate.size())+")";
+			return {final_avg_delivery, final_avg_delivery_time, final_avg_disagreement, termination_percentage};
 		}
 
 		json getResults(){
 			json results;
-			vector<double> results_collected = collectResults();
+			vector<any> results_collected = collectResults();
 			results["n"] = n;
 			results["f"] = f;
 			results["c"] = c;
 			results["p"] = p;
-			results["avg_delivery"] = results_collected[0];
-			results["avg_delivery_time"] = results_collected[1];
-			results["avg_disagreement"] = results_collected[2];
+			results["avg_delivery"] = std::any_cast<double>(results_collected[0]);
+			results["avg_delivery_time"] = std::any_cast<double>(results_collected[1]);
+			results["avg_disagreement"] = std::any_cast<double>(results_collected[2]);
+			results["termination_rate"] = std::any_cast<string>(results_collected[3]);
 			return results;
 		}
 

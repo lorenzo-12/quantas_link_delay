@@ -7,8 +7,8 @@ QUANTAS is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU General Public License along with QUANTAS. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef Alg24Peer_hpp
-#define Alg24Peer_hpp
+#ifndef Alg23Peer_hpp
+#define Alg23Peer_hpp
 
 #include <iostream>
 #include "../Common/Peer.hpp"
@@ -22,7 +22,7 @@ namespace quantas{
     //
     // Example of a message body type
     //
-    struct Alg24Message{
+    struct Alg23Message{
         
         string type;
         long source;
@@ -33,7 +33,7 @@ namespace quantas{
     //
     // Example Peer used for network testing
     //
-    class Alg24Peer : public Peer<Alg24Message>{
+    class Alg23Peer : public Peer<Alg23Message>{
     public:
 
         // ----------- Result parameters -----------
@@ -42,28 +42,21 @@ namespace quantas{
         int percentage;
         vector<interfaceId> honest_nodes;
 
-        int finished_round = -1;
-        int final_value = -1;
+        int finished_round;
+        int final_value;
         bool debug_prints;
         // -----------------------------------------
 
         // ----- Algorithm specific parameters -----
+        int ack_ack_threshold;
         int ack_delivery_threshold;
-        int ack_vote1_threshold;
-        int vote1_vote2_threshold;
-        int vote2_vote2_threshold;
-        int vote2_delivery_threshold;
         bool delivered;
         bool is_first_propose;
 
-        bool ack_sent;
-        bool vote1_sent;
-        bool vote2_sent;
-        map<long, int> ack_msgs;
-        map<long, int> vote1_msgs;
-        map<long, int> vote2_msgs;
+        vector<int> sent_ack_msgs;
+        vector<pair<long, int>> ack_msgs;
 
-        int count(const map<long, int>& s, int value){
+        int count(const vector<pair<long, int>>& s, int value){
             int counter = 0;
             for (const auto& p : s) {
                 if (p.second == value) counter++;
@@ -71,33 +64,27 @@ namespace quantas{
             return counter;
         }
 
-        void addMsg(Alg24Message m) {
+        void addMsg(Alg23Message m) {
             if (m.type == "ack") {
-                ack_msgs[m.source] = m.value;
-            }
-            if (m.type == "vote1") {
-                vote1_msgs[m.source] = m.value;
-            }
-            if (m.type == "vote2") {
-                vote2_msgs[m.source] = m.value;
+                ack_msgs.push_back(make_pair(m.source, m.value));
             }
         }
         // -----------------------------------------
 
 
         // methods that must be defined when deriving from Peer
-        Alg24Peer                             (long);
-        Alg24Peer                             (const Alg24Peer &rhs);
-        ~Alg24Peer                            ();
+        Alg23Peer                             (long);
+        Alg23Peer                             (const Alg23Peer &rhs);
+        ~Alg23Peer                            ();
 
         // initialize the configuration of the system
-        void                 initParameters(const vector<Peer<Alg24Message>*>& _peers, json parameters);
+        void                 initParameters(const vector<Peer<Alg23Message>*>& _peers, json parameters);
         // perform one step of the Algorithm with the messages in inStream
         void                 performComputation ();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
-        void                 endOfRound         (const vector<Peer<Alg24Message>*>& _peers);
+        void                 endOfRound         (const vector<Peer<Alg23Message>*>& _peers);
     };
 
-    Simulation<quantas::Alg24Message, quantas::Alg24Peer>* generateSim();
+    Simulation<quantas::Alg23Message, quantas::Alg23Peer>* generateSim();
 }
-#endif /* Alg24Peer_hpp */
+#endif /* Alg23Peer_hpp */
