@@ -70,7 +70,10 @@ namespace quantas {
 			m1.type = "init";
 			m1.source = id();
 			m1.value = 1;
-			byzantine_broadcast(m0, m1, percentage, honest_nodes);
+
+			vector<interfaceId> group_1;
+			vector<interfaceId> group_2;
+			byzantine_broadcast(m0, m1, percentage, honest_nodes, group_1, group_2);
 			cout << " sent byzantine init messages" << endl;
 		}
 

@@ -4,7 +4,7 @@
             "parameters": {
                 "debug_prints": true,
                 "n": 9,
-                "f": 3,
+                "f": 2,
                 "percentage": 100,
                 "byzantine_nodes": [
                     0,

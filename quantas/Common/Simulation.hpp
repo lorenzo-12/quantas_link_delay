@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License along with QUA
 #include <thread>
 #include <fstream>
 #include <any>
+#include <string>
 
 #include "Network.hpp"
 #include "LogWriter.hpp"
@@ -104,7 +105,7 @@ namespace quantas {
 				}
 			}
 
-			if (counter==0) return {0, 0, 0, "0% (0/0)"};
+			if (counter==0) return {0.0, 0.0, 0.0, string("0% (0/0)")};
 
 			final_avg_delivery = sum_delivery / counter;
 			final_avg_delivery_time = sum_delivery_time / counter;

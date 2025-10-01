@@ -79,7 +79,10 @@ namespace quantas {
 			m1.type = "propose";
 			m1.source = id();
 			m1.value = 1;
-			byzantine_broadcast(m0, m1, percentage, honest_nodes);
+
+			vector<interfaceId> group_1;
+			vector<interfaceId> group_2;
+			byzantine_broadcast(m0, m1, percentage, honest_nodes, group_1, group_2);
 			if (debug_prints) cout << " sent byzantine propose messages" << endl;
 		}
 
@@ -118,7 +121,7 @@ namespace quantas {
 				ack_msg.value = m.value;
 				broadcast(ack_msg);
 				ack_sent = true;
-				if (debug_prints) printf("--> (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
+				if (debug_prints) printf("--> step 2: (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
 			}
 			// ------------------------------------------------------------------------------------
 
@@ -133,7 +136,7 @@ namespace quantas {
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
 					vote1_sent = true;
-					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+					if (debug_prints) printf("--> step 3: (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 
 					Alg24Message vote2_msg;
 					vote2_msg.type = "vote2";
@@ -141,12 +144,12 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> step 3: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
-					if (debug_prints) cout << " DELIVERED value " << final_value << endl;
+					if (debug_prints) cout << " step 3: DELIVERED value " << final_value << endl;
 				}
 				// --------------------------------------------------------------------------------
 
@@ -159,7 +162,7 @@ namespace quantas {
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
 					vote1_sent = true;
-					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+					if (debug_prints) printf("--> step 4.1: (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 				}
 				// --------------------------------------------------------------------------------
 			}
@@ -173,7 +176,7 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> step 4.2: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}
 			}
 			// ------------------------------------------------------------------------------------
@@ -188,7 +191,7 @@ namespace quantas {
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
 					vote2_sent = true;
-					if (debug_prints) printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+					if (debug_prints) printf("--> step 4.3: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}
 				// --------------------------------------------------------------------------------
 
@@ -198,7 +201,7 @@ namespace quantas {
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
-					if (debug_prints) cout << " DELIVERED value " << final_value << endl;
+					if (debug_prints) cout << " step 5: DELIVERED value " << final_value << endl;
 				}
 				// --------------------------------------------------------------------------------
 			}

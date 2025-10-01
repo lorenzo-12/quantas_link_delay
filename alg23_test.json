@@ -1,13 +1,13 @@
 {
     "Results": {
-        "avg_delivery": 100.0,
-        "avg_delivery_time": 2.0,
+        "avg_delivery": 85.71428571428571,
+        "avg_delivery_time": 2.5714285714285716,
         "avg_disagreement": 0.0,
-        "c": 6,
-        "f": 3,
+        "c": 7,
+        "f": 2,
         "n": 9,
         "p": 100,
         "termination_rate": "100.000000% (1/1)"
     },
-    "RunTime": 0.000716625
+    "RunTime": 0.000763708
 }

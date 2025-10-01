@@ -113,7 +113,8 @@ namespace quantas{
     protected:
         // functions for peer
         void                               broadcast             (message msg);
-        void                               byzantine_broadcast   (message m1, message m2, int percentage, vector<interfaceId> honest_nodes);
+        void                               byzantine_broadcast   (message m1, message m2, int percentage, vector<interfaceId> honest_nodes, vector<interfaceId>& group_1, vector<interfaceId>& group_2);
+        void                               broadcastTo           (message msg, vector<interfaceId> ids);
         void                               broadcastBut          (message msg, long id);
         void                               unicast               (message msg);
         void                               unicastTo             (message msg, long dest);
@@ -183,10 +184,7 @@ namespace quantas{
     }
 
     template <class message>
-    void NetworkInterface<message>::byzantine_broadcast(message m1, message m2, int percentage, vector<interfaceId> honest_nodes){
-
-        vector<interfaceId> group_1;
-        vector<interfaceId> group_2;
+    void NetworkInterface<message>::byzantine_broadcast(message m1, message m2, int percentage, vector<interfaceId> honest_nodes, vector<interfaceId>& group_1, vector<interfaceId>& group_2){
 
         if (percentage < 0) percentage = 0;
         if (percentage > 100) percentage = 100;
@@ -218,6 +216,18 @@ namespace quantas{
             _outStream.push_back(outPacket);
         }
 
+    }
+
+    // Send to a list of neighbors
+    template <class message>
+    void NetworkInterface<message>::broadcastTo(message msg, vector<interfaceId> ids){
+        for(auto target_id : ids){
+            Packet<message> outPacket = Packet<message>(-1);
+            outPacket.setSource(id());
+            outPacket.setTarget(target_id);
+            outPacket.setMessage(msg);
+            _outStream.push_back(outPacket);
+        }
     }
 
     // Send to all neighbors except id
