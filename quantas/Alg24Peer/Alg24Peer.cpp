@@ -1,0 +1,201 @@
+/*
+Copyright 2022
+
+This file is part of QUANTAS.
+QUANTAS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+QUANTAS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with QUANTAS. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#include "Alg24Peer.hpp"
+
+namespace quantas {
+
+	//
+	// Example Channel definitions
+	//
+	Alg24Peer::~Alg24Peer() {
+
+	}
+
+	Alg24Peer::Alg24Peer(const Alg24Peer& rhs) : Peer<Alg24Message>(rhs) {
+		
+	}
+
+	Alg24Peer::Alg24Peer(long id) : Peer(id) {
+		
+	}
+
+	void Alg24Peer::initParameters(const vector<Peer<Alg24Message>*>& _peers, json parameters) {
+		const vector<Alg24Peer*> peers = reinterpret_cast<vector<Alg24Peer*> const&>(_peers);
+		
+		int f = parameters["f"];
+		int n = parameters["n"];
+		sender = parameters["sender"];
+		percentage = parameters["percentage"];
+
+		is_byzantine = true;
+		if (parameters["byzantine_nodes"][id()] == 0) is_byzantine = false;
+
+		honest_nodes.clear();
+		for (int i = 0; i<n; i++){
+			if (parameters["byzantine_nodes"][i] == 0) honest_nodes.push_back(i);
+		}
+		
+		ack_delivery_threshold = n-f-1;
+		ack_vote1_threshold = n-2*f;
+		vote1_vote2_threshold = n-f-1;
+		vote2_vote2_threshold = f+1;
+		vote2_delivery_threshold = n-f-1;
+
+		// reset algorithm specific variables
+		delivered = false;
+		ack_sent = false;
+		vote1_sent = false;
+		vote2_sent = false;
+		ack_msgs.clear();
+		vote1_msgs.clear();
+		vote2_msgs.clear();
+		
+		finished_round = -1;
+		final_value = -1;
+		
+	}
+
+	void Alg24Peer::performComputation() {
+
+		if (is_byzantine && getRound() == 0 && id() == sender) {
+			Alg24Message m1;
+			m1.type = "propose";
+			m1.source = id();
+			m1.value = 0;
+
+			Alg24Message m2;
+			m2.type = "propose";
+			m2.source = id();
+			m2.value = 1;
+			byzantine_broadcast(m1, m2, percentage, honest_nodes);
+			cout << " sent byzantine propose messages" << endl;
+		}
+
+		if (is_byzantine) {
+			// Byzantine nodes do nothing else
+			return;
+		}
+
+		cout << "node_" << id() << " -------------------------------------" << endl;
+		while (!inStreamEmpty()) {
+			Packet<Alg24Message> newMsg = popInStream();
+			Alg24Message m = newMsg.getMessage();
+			addMsg(m);
+			printf("<-- (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
+			
+			if (m.type == "propose"){
+				Alg24Message ack_msg;
+				ack_msg.type = "ack";
+				ack_msg.source = id();
+				ack_msg.value = m.value;
+				broadcast(ack_msg);
+				ack_sent = true;
+				printf("--> (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
+			}
+
+			if (m.type == "ack"){
+				if ((count(ack_msgs, m.value) >= ack_delivery_threshold) && (delivered == false)){
+					Alg24Message vote1_msg;
+					vote1_msg.type = "vote1";
+					vote1_msg.source = id();
+					vote1_msg.value = m.value;
+					broadcast(vote1_msg);
+					vote1_sent = true;
+					printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+
+					Alg24Message vote2_msg;
+					vote2_msg.type = "vote2";
+					vote2_msg.source = id();
+					vote2_msg.value = m.value;
+					broadcast(vote2_msg);
+					vote2_sent = true;
+					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+
+					delivered = true;
+					finished_round = getRound();
+					final_value = m.value;
+					cout << " DELIVERED value " << final_value << endl;
+				}
+
+				if ((count(ack_msgs, m.value) >= ack_vote1_threshold) && (vote1_sent == false)){
+					Alg24Message vote1_msg;
+					vote1_msg.type = "vote1";
+					vote1_msg.source = id();
+					vote1_msg.value = m.value;
+					broadcast(vote1_msg);
+					vote1_sent = true;
+					printf("--> (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
+				}
+			}
+
+			if (m.type == "vote1"){
+				if ((count(vote1_msgs, m.value) >= vote1_vote2_threshold) && (vote2_sent == false)){
+					Alg24Message vote2_msg;
+					vote2_msg.type = "vote2";
+					vote2_msg.source = id();
+					vote2_msg.value = m.value;
+					broadcast(vote2_msg);
+					vote2_sent = true;
+					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+				}
+			}
+
+			if (m.type == "vote2"){
+				if ((count(vote2_msgs, m.value) >= vote2_vote2_threshold) && (vote2_sent == false)){
+					Alg24Message vote2_msg;
+					vote2_msg.type = "vote2";
+					vote2_msg.source = id();
+					vote2_msg.value = m.value;
+					broadcast(vote2_msg);
+					vote2_sent = true;
+					printf("--> (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
+				}
+
+				if ((count(vote2_msgs, m.value) >= vote2_delivery_threshold) && (delivered == false)){
+					delivered = true;
+					finished_round = getRound();
+					final_value = m.value;
+					cout << " DELIVERED value " << final_value << endl;
+				}
+			}
+			
+		}
+
+		cout << " ack_msgs: [";
+		for (const auto& p : ack_msgs) {
+			cout << "(" << p.first << "," << p.second << ") ";
+		}
+		cout << "]" << endl;
+		cout << " vote1_msgs: [";
+		for (const auto& p : vote1_msgs) {
+			cout << "(" << p.first << "," << p.second << ") ";
+		}
+		cout << "]" << endl;
+		cout << " vote2_msgs: [";
+		for (const auto& p : vote2_msgs) {
+			cout << "(" << p.first << "," << p.second << ") ";
+		}
+		cout << "]" << endl;
+		cout << "--------------------------------------------" << endl << endl;
+		
+		
+		
+	}
+
+	void Alg24Peer::endOfRound(const vector<Peer<Alg24Message>*>& _peers) {
+		cout << "-------------------------------------------------- End of round " << getRound() << "--------------------------------------------------" << endl << endl;
+	}
+
+	Simulation<quantas::Alg24Message, quantas::Alg24Peer>* generateSim() {
+        
+        Simulation<quantas::Alg24Message, quantas::Alg24Peer>* sim = new Simulation<quantas::Alg24Message, quantas::Alg24Peer>;
+        return sim;
+    }
+}

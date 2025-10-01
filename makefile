@@ -19,8 +19,15 @@ PROJECT_DIR := quantas
 #  configure this for the specific algorithm and input file
 #
 
-INPUTFILE := bracha.json
-ALGFILE := BrachaPeer
+INPUTFILE := test.json
+ALGFILE := Alg24Peer
+
+#INPUTFILE := bracha.json
+#ALGFILE := BrachaPeer
+#INPUTFILE := imbsraynal.json
+#ALGFILE := ImbsRaynalPeer
+#INPUTFILE := alg24.json
+#ALGFILE := Alg24Peer
 
 # INPUTFILE := BitcoinInput.json
 

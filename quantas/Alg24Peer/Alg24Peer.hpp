@@ -7,8 +7,8 @@ QUANTAS is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU General Public License along with QUANTAS. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BrachaPeer_hpp
-#define BrachaPeer_hpp
+#ifndef Alg24Peer_hpp
+#define Alg24Peer_hpp
 
 #include <iostream>
 #include "../Common/Peer.hpp"
@@ -22,17 +22,18 @@ namespace quantas{
     //
     // Example of a message body type
     //
-    struct BrachaMessage{
+    struct Alg24Message{
         
         string type;
         long source;
         int value;
+        
     };
 
     //
     // Example Peer used for network testing
     //
-    class BrachaPeer : public Peer<BrachaMessage>{
+    class Alg24Peer : public Peer<Alg24Message>{
     public:
 
         // ----------- Result parameters -----------
@@ -46,59 +47,55 @@ namespace quantas{
         // -----------------------------------------
 
         // ----- Algorithm specific parameters -----
-        int echo_threshold;
-        int ready_threshold;
-        int delivery_threshold;
-        bool sent_echo = false;
-        bool sent_ready = false;
+        int ack_delivery_threshold;
+        int ack_vote1_threshold;
+        int vote1_vote2_threshold;
+        int vote2_vote2_threshold;
+        int vote2_delivery_threshold;
         bool delivered = false;
-        map<long, int> echo_msgs;
-        map<long, int> ready_msgs;
+        
+        bool ack_sent = false;
+        bool vote1_sent = false;
+        bool vote2_sent = false;
+        map<long, int> ack_msgs;
+        map<long, int> vote1_msgs;
+        map<long, int> vote2_msgs;
 
-        int check_echo(){
-            unordered_map<int, int> freq;
-            for (const auto& m : echo_msgs) {
-                int v = m.second;
-                int c = ++freq[v];
-                if (c >= echo_threshold) return v;
+        int count(const map<long, int>& s, int value){
+            int counter = 0;
+            for (const auto& p : s) {
+                if (p.second == value) counter++;
             }
-            return -1;
+            return counter;
         }
 
-        int check_ready(){
-            unordered_map<int, int> freq;
-            for (const auto& m : ready_msgs) {
-                int v = m.second;
-                int c = ++freq[v];
-                if (c >= ready_threshold) return v;
+        void addMsg(Alg24Message m) {
+            if (m.type == "ack") {
+                ack_msgs[m.source] = m.value;
             }
-            return -1;
-        }
-        int check_delivery(){
-            unordered_map<int, int> freq;
-            for (const auto& m : ready_msgs) {
-                int v = m.second;
-                int c = ++freq[v];
-                if (c >= delivery_threshold) return v;
+            if (m.type == "vote1") {
+                vote1_msgs[m.source] = m.value;
             }
-            return -1;
+            if (m.type == "vote2") {
+                vote2_msgs[m.source] = m.value;
+            }
         }
         // -----------------------------------------
 
 
         // methods that must be defined when deriving from Peer
-        BrachaPeer                             (long);
-        BrachaPeer                             (const BrachaPeer &rhs);
-        ~BrachaPeer                            ();
+        Alg24Peer                             (long);
+        Alg24Peer                             (const Alg24Peer &rhs);
+        ~Alg24Peer                            ();
 
         // initialize the configuration of the system
-        void                 initParameters(const vector<Peer<BrachaMessage>*>& _peers, json parameters);
+        void                 initParameters(const vector<Peer<Alg24Message>*>& _peers, json parameters);
         // perform one step of the Algorithm with the messages in inStream
         void                 performComputation ();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
-        void                 endOfRound         (const vector<Peer<BrachaMessage>*>& _peers);
+        void                 endOfRound         (const vector<Peer<Alg24Message>*>& _peers);
     };
 
-    Simulation<quantas::BrachaMessage, quantas::BrachaPeer>* generateSim();
+    Simulation<quantas::Alg24Message, quantas::Alg24Peer>* generateSim();
 }
-#endif /* BrachaPeer_hpp */
+#endif /* Alg24Peer_hpp */

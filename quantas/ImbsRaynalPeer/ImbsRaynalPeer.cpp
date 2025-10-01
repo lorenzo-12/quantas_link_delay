@@ -26,36 +26,6 @@ namespace quantas {
 		
 	}
 
-	int ImbsRaynalPeer::check_witness(interfaceId source, int value) {
-		int counter = 0;
-		for (const auto& p : received_witness) {
-			if (p.first == source && p.second == value) counter++;
-			if (counter >= witness_threshold) return value;
-		}
-
-		return -1;
-	}
-
-	int ImbsRaynalPeer::check_delivery(interfaceId source, int value) {
-		int counter = 0;
-		for (const auto& p : received_witness) {
-			if (p.first == source && p.second == value) counter++;
-			if (counter >= delivery_threshold) return value;
-		}
-		return -1;
-	}
-
-	bool ImbsRaynalPeer::contains(const vector<pair<long,int>>& s, long source) {
-		for (const auto& p : s){
-			if (p.first == source) return true;
-		}
-		return false;
-	}
-
-	bool ImbsRaynalPeer::contains(const vector<pair<long,int>>& s, long source, int value) {
-		return find(s.begin(), s.end(), std::make_pair(source, value)) != s.end();
-	}
-
 	void ImbsRaynalPeer::initParameters(const vector<Peer<ImbsRaynalMessage>*>& _peers, json parameters) {
 		const vector<ImbsRaynalPeer*> peers = reinterpret_cast<vector<ImbsRaynalPeer*> const&>(_peers);
 		
@@ -85,11 +55,6 @@ namespace quantas {
 	}
 
 	void ImbsRaynalPeer::performComputation() {
-
-		if (delivered) {
-			// already delivered, do nothing
-			return;
-		}
 
 		if (is_byzantine && getRound() == 0 && id() == sender) {
 			ImbsRaynalMessage m1;

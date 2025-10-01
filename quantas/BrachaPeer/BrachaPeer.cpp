@@ -30,36 +30,6 @@ namespace quantas {
 		
 	}
 
-	int BrachaPeer::check_echo() {
-		unordered_map<int, int> freq;
-		for (const auto& m : echo_msgs) {
-			int v = m.second;
-			int c = ++freq[v];
-			if (c >= echo_threshold) return v;
-		}
-		return -1;
-	}
-
-	int BrachaPeer::check_ready() {
-		unordered_map<int, int> freq;
-		for (const auto& m : ready_msgs) {
-			int v = m.second;
-			int c = ++freq[v];
-			if (c >= ready_threshold) return v;
-		}
-		return -1;
-	}
-
-	int BrachaPeer::check_delivery() {
-		unordered_map<int, int> freq;
-		for (const auto& m : ready_msgs) {
-			int v = m.second;
-			int c = ++freq[v];
-			if (c >= delivery_threshold) return v;
-		}
-		return -1;
-	}
-
 	void BrachaPeer::initParameters(const vector<Peer<BrachaMessage>*>& _peers, json parameters) {
 		const vector<BrachaPeer*> peers = reinterpret_cast<vector<BrachaPeer*> const&>(_peers);
 		
@@ -91,11 +61,6 @@ namespace quantas {
 	}
 
 	void BrachaPeer::performComputation() {
-
-		if (delivered) {
-			// already delivered, do nothing
-			return;
-		}
 
 		if (is_byzantine && getRound() == 0 && id() == sender) {
 			BrachaMessage m1;

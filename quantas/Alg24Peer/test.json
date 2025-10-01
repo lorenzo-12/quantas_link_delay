@@ -1,0 +1,39 @@
+{
+    "experiments": [
+        {
+            "parameters": {
+                "n": 6,
+                "f": 1,
+                "percentage": 100,
+                "byzantine_nodes": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "sender": 0
+            },
+            "distribution": {
+                "type": "ONE",
+                "maxDelay": 10,
+                "global_delay": 5,
+                "global_delays_setting": "uniform",
+                "min_lambda": 3,
+                "max_lambda": 4,
+                "n": 6,
+                "links_delay": {}
+            },
+            "topology": {
+                "type": "fullyComplete",
+                "initialPeers": 6,
+                "totalPeers": 6
+            },
+            "threadCount": 1,
+            "logFile": "alg24_test.json",
+            "tests": 1,
+            "rounds": 10
+        }
+    ]
+}
