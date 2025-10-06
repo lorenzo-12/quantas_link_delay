@@ -32,7 +32,7 @@
                 "initialPeers": 10,
                 "totalPeers": 10
             },
-            "logFile": "alg24_test_log.json",
+            "logFile": "bracha_test_log.json",
             "threadCount": 1,
             "tests": 1,
             "rounds": 10

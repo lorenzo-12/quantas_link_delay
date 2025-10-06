@@ -20,7 +20,7 @@ PROJECT_DIR := quantas
 #
 
 INPUTFILE := test.json
-ALGFILE := Alg23Peer
+ALGFILE := ImbsRaynalPeer
 
 #INPUTFILE := bracha.json
 #ALGFILE := BrachaPeer

@@ -33,6 +33,8 @@ namespace quantas {
 		int n = parameters["n"];
 		sender = parameters["sender"];
 		percentage = parameters["percentage"];
+		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
+		honest_group_1 = parameters["honest_group_1"].get<vector<interfaceId>>();
 
 		is_byzantine = true;
 		if (parameters["byzantine_nodes"][id()] == 0) is_byzantine = false;
@@ -80,9 +82,7 @@ namespace quantas {
 			m1.source = id();
 			m1.value = 1;
 
-			vector<interfaceId> group_1;
-			vector<interfaceId> group_2;
-			byzantine_broadcast(m0, m1, percentage, honest_nodes, group_1, group_2);
+			byzantine_broadcast(m0, m1, honest_group_0, honest_group_1);
 			if (debug_prints) cout << " sent byzantine propose messages" << endl;
 		}
 
@@ -93,6 +93,33 @@ namespace quantas {
 			m0.value = 0;
 			broadcast(m0);
 			if (debug_prints) cout << " sent honest propose message" << endl;
+		}
+
+		// ------------------------------ Byzantine Ack/ Vote -----------------------------------------
+		// Byzantine nodes send conflicting ack messages to honest groups
+		// Honest nodes are split into two groups, each receiving a different value
+		// This simulates a worst-case scenario where Byzantine nodes try to cause maximum confusion
+		if (is_byzantine && getRound() == 0){
+			Alg24Message m0;
+			m0.type = "ack";
+			m0.source = id();
+			m0.value = 0;
+			Alg24Message m1;
+			m1.type = "ack";
+			m1.source = id();
+			m1.value = 1;
+			// sends m0 to honest_group_1 and m1 to honest_group_0
+			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+
+			m0.type = "vote1";
+			m1.type = "vote1";
+			// sends m0 to honest_group_1 and m1 to honest_group_0
+			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+
+			m0.type = "vote2";
+			m1.type = "vote2";
+			// sends m0 to honest_group_1 and m1 to honest_group_0
+			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
 		}
 		// ----------------------------------------------------------------------------------------
 

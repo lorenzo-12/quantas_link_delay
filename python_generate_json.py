@@ -8,11 +8,20 @@ dir_file_json = pathlib.Path(__file__).parent / "quantas"
 base_file = pathlib.Path(__file__).parent / "base.json"
 results_dir = pathlib.Path(__file__).parent / "results"
 
-alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer")]
+alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer")]
 n_list = [100]
 f_list = [20, 30, 35, 40, 45, 50]
 p_list = [100, 90, 80, 70, 60, 50]
 tests = 1000 
+
+def get_honest_groups(n, p, byz_nodes):
+    num_honest = n - len(byz_nodes)
+    group_size = num_honest * p // 100
+    all_honest = [i for i in range(n) if i not in byz_nodes]
+    random.shuffle(all_honest)
+    group_1 = all_honest[:group_size]
+    group_2 = all_honest[group_size:]
+    return group_1, group_2
 
 def getByzantineVector(n,f):
     byzantine_nodes = random.sample(range(0, n), f)
@@ -69,13 +78,17 @@ for alg, alg_class in alg_list:
                 exp["topology"] = {}
                 
                 parameters = exp["parameters"]
+                parameters["debug_prints"] = False
                 parameters["n"] = n
                 parameters["f"] = f
                 parameters["percentage"] = p
                 byz_vec, vec = getByzantineVector(n,f)
                 parameters["byzantine_nodes"] = vec
                 parameters["sender"] = getByzantineSender(byz_vec)
-                
+                honest_group_1, honest_group_2 = get_honest_groups(n, p, byz_vec)
+                parameters["honest_group_1"] = honest_group_1
+                parameters["honest_group_2"] = honest_group_2
+
                 distribution = exp["distribution"]
                 distribution["type"] = "GEOMETRIC"
                 #distribution["type"] = "UNIFORM"

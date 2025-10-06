@@ -55,6 +55,8 @@ namespace quantas{
 
         vector<int> sent_ack_msgs;
         vector<pair<long, int>> ack_msgs;
+        vector<interfaceId> honest_group_0;
+        vector<interfaceId> honest_group_1;
 
         int count(const vector<pair<long, int>>& s, int value){
             int counter = 0;

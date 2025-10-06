@@ -2,36 +2,38 @@
     "experiments": [
         {
             "parameters": {
-                "n": 6,
-                "f": 1,
-                "percentage": 100,
+                "debug_prints": true,
+                "n": 10,
+                "f": 2,
+                "percentage": 50,
                 "byzantine_nodes": [
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
+                    1,1,0,0,0,0,0,0,0,0
                 ],
-                "sender": 0
+                "sender": 0,
+                "honest_group_0": [
+                    2,3,4,5
+                ],
+                "honest_group_1": [
+                    6,7,8,9
+                ]
             },
             "distribution": {
-                "type": "GEOMETRIC",
+                "type": "ONE",
                 "maxDelay": 10,
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
-                "min_lambda": 3,
-                "max_lambda": 4,
-                "n": 6,
+                "min_lambda": 0.05,
+                "max_lambda": 2.0,
+                "n": 10,
                 "links_delay": {}
             },
             "topology": {
                 "type": "fullyComplete",
-                "initialPeers": 6,
-                "totalPeers": 6
+                "initialPeers": 10,
+                "totalPeers": 10
             },
+            "logFile": "imbs_raynal_test_log.json",
             "threadCount": 1,
-            "logFile": "imbs_raynal_test.json",
             "tests": 1,
             "rounds": 10
         }

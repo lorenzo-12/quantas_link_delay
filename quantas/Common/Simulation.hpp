@@ -38,9 +38,9 @@ namespace quantas {
 		int c = 0;
 		int p = 0;
 		
-		vector<double> avg_delivery_nodes;
-		vector<double> avg_delivery_time;
-		vector<double> avg_disagreement;
+		vector<double> delivery_nodes;
+		vector<double> delivery_time;
+		vector<double> disagreement;
 		vector<double> termination_rate;
 
 		void setParameters(int _n, int _f, int _p){
@@ -66,17 +66,20 @@ namespace quantas {
 			}
 			
 			if (sum_delivery_time==0 || counter_node_terminated==0){
-				avg_delivery_nodes.push_back(0);
-				avg_delivery_time.push_back(0);
-				avg_disagreement.push_back(0);
+				delivery_nodes.push_back(0);
+				delivery_time.push_back(0);
+				disagreement.push_back(0);
 				termination_rate.push_back(0);
 			}
 			else{
-				avg_delivery_nodes.push_back((double)counter_node_terminated *100 / c);
-				avg_delivery_time.push_back((double)sum_delivery_time / c);
-				int dis = (counter_vote_0+counter_vote_1) - abs(counter_vote_0 - counter_vote_1);
-				avg_disagreement.push_back((double)dis *100/ c);
+				delivery_nodes.push_back((double)counter_node_terminated *100 / c);
+				delivery_time.push_back((double)sum_delivery_time / c);
 				termination_rate.push_back(1);
+
+				double min_vote = min(counter_vote_0, counter_vote_1);
+				double sum_vote = counter_vote_0 + counter_vote_1;
+				double dis = min_vote *100 / sum_vote;
+				disagreement.push_back(dis);
 			}
 			
 		}
@@ -85,34 +88,40 @@ namespace quantas {
 			double sum_delivery = 0;
 			double sum_delivery_time = 0;
 			double sum_disagreement = 0;
-			double final_avg_delivery = 0;
-			double final_avg_delivery_time = 0;
-			double final_avg_disagreement = 0;
+			double avg_delivery = 0;
+			double avg_delivery_time = 0;
+			double avg_disagreement = 0;
 			int termination_sum = 0;
 			string termination_percentage;
 			int counter = 0;
-			for (int i=0; i<avg_delivery_nodes.size(); i++){
-				double x = avg_delivery_nodes[i];
-				double y = avg_delivery_time[i];
-				double z = avg_disagreement[i];
+			int counter_disagreement = 0;
+			for (int i=0; i<delivery_nodes.size(); i++){
+				double x = delivery_nodes[i];
+				double y = delivery_time[i];
+				double z = disagreement[i];
 				termination_sum += termination_rate[i];
 
 				if (x!=0 && y != 0){
 					sum_delivery += x;
 					sum_delivery_time += y;
-					sum_disagreement += z;
 					counter++;
+				}
+
+				if (z!=0){
+					sum_disagreement += z;
+					counter_disagreement++;
 				}
 			}
 
 			if (counter==0) return {0.0, 0.0, 0.0, string("0% (0/0)")};
 
-			final_avg_delivery = sum_delivery / counter;
-			final_avg_delivery_time = sum_delivery_time / counter;
-			final_avg_disagreement = sum_disagreement / counter;
+			avg_delivery = sum_delivery / counter;
+			avg_delivery_time = sum_delivery_time / counter;
 			double tp = (double)termination_sum *100 / termination_rate.size();
 			termination_percentage = to_string(tp)+"% ("+to_string(termination_sum)+"/"+to_string(termination_rate.size())+")";
-			return {final_avg_delivery, final_avg_delivery_time, final_avg_disagreement, termination_percentage};
+			if (counter_disagreement==0) avg_disagreement = 0;
+			else avg_disagreement = sum_disagreement / counter_disagreement;
+			return {avg_delivery, avg_delivery_time, avg_disagreement, termination_percentage};
 		}
 
 		json getResults(){
