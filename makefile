@@ -19,8 +19,8 @@ PROJECT_DIR := quantas
 #  configure this for the specific algorithm and input file
 #
 
-INPUTFILE := test.json
-ALGFILE := ImbsRaynalPeer
+INPUTFILE := bracha.json
+ALGFILE := BrachaPeer
 
 #INPUTFILE := bracha.json
 #ALGFILE := BrachaPeer

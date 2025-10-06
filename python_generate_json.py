@@ -85,9 +85,9 @@ for alg, alg_class in alg_list:
                 byz_vec, vec = getByzantineVector(n,f)
                 parameters["byzantine_nodes"] = vec
                 parameters["sender"] = getByzantineSender(byz_vec)
-                honest_group_1, honest_group_2 = get_honest_groups(n, p, byz_vec)
+                honest_group_0, honest_group_1 = get_honest_groups(n, p, byz_vec)
+                parameters["honest_group_0"] = honest_group_0
                 parameters["honest_group_1"] = honest_group_1
-                parameters["honest_group_2"] = honest_group_2
 
                 distribution = exp["distribution"]
                 distribution["type"] = "GEOMETRIC"
