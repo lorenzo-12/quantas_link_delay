@@ -59,11 +59,11 @@ def getGlobalDelays_distribution(n):
             delays[str(i)][str(j)] = round(random.uniform(0.05, 2.0),2)
     return delays
 
-experiments = {} 
-experiments["experiments"] = []
 
 for alg, alg_class in alg_list:
     (results_dir / alg).mkdir(parents=True, exist_ok=True)
+    experiments = {} 
+    experiments["experiments"] = []
     for n in n_list:
         for f in f_list:
             for p in p_list:
@@ -105,7 +105,7 @@ for alg, alg_class in alg_list:
                 topology["type"] = "fullyComplete"
                 topology["initialPeers"] = n
                 topology["totalPeers"] = n 
-                
+
                 exp["logFile"] = f"results/{alg}/n{n}_f{f}_p{p}.json"
                 file_path_on_disk = results_dir / alg / f"n{n}_f{f}_p{p}.json"
                 with open(file_path_on_disk, 'w') as log_file:
@@ -115,6 +115,7 @@ for alg, alg_class in alg_list:
                     
                 experiments["experiments"].append(exp)
 
+    print(alg, alg_class)
     file_name = f"{alg}.json"
     file_path = dir_file_json / alg_class / file_name       
     with open(file_path, 'w') as f:
