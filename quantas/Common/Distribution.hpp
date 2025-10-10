@@ -68,16 +68,23 @@ namespace quantas{
         int                                 _avgDelay = 1;
         int                                 _maxDelay = 1;
         int                                 _minDelay = 1;
+        double                              _min_lambda = 1;
+        double                              _max_lambda = 1;
         string                              _type = UNIFORM;
         map<long,map<long,double>>          _links_delay;
+        map<long,map<long,double>>          _links_lambda;
         double                              _global_delay = 1;
+        double                              _global_lambda = 1;
 
     public:
         Distribution                                                 () {
             _avgDelay = 1;
             _maxDelay = 1;
             _minDelay = 1;
+            _min_lambda = 1;
+            _max_lambda = 1;
             _global_delay   = 1;
+            _global_lambda  = 1;
             _type = UNIFORM;
         }
 
@@ -93,8 +100,8 @@ namespace quantas{
         int                                 avgDelay            ()const                                         {return _avgDelay;};
         int                                 minDelay            ()const                                         {return _minDelay;};
         string                              type                ()const                                         {return _type;};
-        int                                 getDelay(long s, long d);
-        double                              getGlobalDelay      (long s, long d);
+        int                                 getDelay            (long s, long d);
+        double                              getLinkValue        (long s, long d);
 
     };
 
@@ -106,9 +113,13 @@ namespace quantas{
         _avgDelay = rhs._avgDelay;
         _maxDelay = rhs._maxDelay;
         _minDelay = rhs._minDelay;
+        _min_lambda = rhs._min_lambda;
+        _max_lambda = rhs._max_lambda;
         _global_delay = rhs._global_delay;
+        _global_lambda = rhs._global_lambda;
         _type = rhs._type;
         _links_delay = rhs._links_delay;
+        _links_lambda = rhs._links_lambda;
     }
 
     inline Distribution::~Distribution(){
@@ -125,8 +136,17 @@ namespace quantas{
         if (distribution.contains("minDelay")) {
             _minDelay = distribution["minDelay"];
         }
+        if (distribution.contains("min_lambda")) {
+            _min_lambda = distribution["min_lambda"];
+        }
+        if (distribution.contains("max_lambda")) {
+            _max_lambda = distribution["max_lambda"];
+        }
         if (distribution.contains("global_delay")){
             _global_delay = distribution["global_delay"];
+        }
+        if (distribution.contains("global_lambda")){
+            _global_lambda = distribution["global_lambda"];
         }
 
         if (distribution.contains("type")) {
@@ -158,28 +178,24 @@ namespace quantas{
                 //cout << "[Distribution] Setting GEOMETRIC distribution" << endl;
                 _type = GEOMETRIC;
 
-                if (distribution.contains("global_delays_setting")){
-                    if (distribution["global_delays_setting"] == "uniform"){
-                        double min_lambda = distribution["min_lambda"];
-                        double max_lambda = distribution["max_lambda"];
-                        int n = distribution["n"];
-                        map<long,map<long,double>> dict;
-                        for (int i = 0; i < n; i++){
-                            for (int j = 0; j < n; j++){
-                                dict[i][j] = uniformDouble(min_lambda, max_lambda);
-                            }
+                if (distribution["global_delays_setting"] == "uniform"){
+                    int n = distribution["n"];
+                    map<long,map<long,double>> dict;
+                    for (int i = 0; i < n; i++){
+                        for (int j = 0; j < n; j++){
+                            dict[i][j] = uniformDouble(_min_lambda, _max_lambda);
                         }
-                        _links_delay = dict;
                     }
-                    if (distribution["global_delays_setting"] == "personalized"){
-                        map<long,map<long,double>> dict;
-                        for (auto& [i,val] : distribution["links_delay"].items()){
-                            for (auto& [j,delay] : val.items()){
-                                dict[stol(i)][stol(j)] = delay;
-                            }
+                    _links_lambda = dict;
+                }
+                if (distribution["global_delays_setting"] == "personalized"){
+                    map<long,map<long,double>> dict;
+                    for (auto& [i,val] : distribution["links_delay"].items()){
+                        for (auto& [j,delay] : val.items()){
+                            dict[stol(i)][stol(j)] = delay;
                         }
-                        _links_delay = dict;
                     }
+                    _links_lambda = dict;
                 }
                 
                 
@@ -187,38 +203,57 @@ namespace quantas{
         }
     }
 
-    inline double Distribution::getGlobalDelay(long s, long d) {
-        // set the default delay that will be used in case the map does not contain the link (source, destination)
-        double default_delay = _global_delay;
+    inline double Distribution::getLinkValue(long s, long d) {
+        
+        // choose which map to use
+        map<long,map<long,double>> m;
+        double default_value;
+        if (_type == SPECIFIC) {
+            m = _links_delay;
+            default_value = _global_delay;
+            if (default_value > _maxDelay) {
+                default_value = static_cast<double>(_maxDelay);
+            }
+            if (default_value < _minDelay) {
+                default_value = static_cast<double>(_minDelay);
+            }
+        }
+        if (_type == GEOMETRIC) {
+            m = _links_lambda;
+            default_value = _global_lambda;
+            if (default_value > _max_lambda) {
+                default_value = static_cast<double>(_max_lambda);
+            }
+            if (default_value < _min_lambda) {
+                default_value = static_cast<double>(_min_lambda);
+            }
+        }
 
-        // guard against default_delay being out of bounds
-        if (default_delay > _maxDelay) {
-            default_delay = static_cast<double>(_maxDelay);
-        }
-        if (default_delay < _minDelay) {
-            default_delay = static_cast<double>(_minDelay);
-        }
+        // set the default delay that will be used in case the map does not contain the link (source, destination)
+
 
         // if map is empy return default_delay
-        if (_links_delay.empty()) {
-            return default_delay;
+        if (m.empty()) {
+            return default_value;
         }
 
         // if the source is not in the map return default_delay
         auto itSender = _links_delay.find(s);
         if (itSender == _links_delay.end()) {
-            return default_delay;  // source not found
+            return default_value;  // source not found
         }
 
         // if the pair (source,destination) is not in the map return 
         auto itDestination = itSender->second.find(d);
         if (itDestination == itSender->second.end()) {
-            return default_delay;  // destination not found
+            return default_value;  // destination not found
         }
     
         // return the value associated to _global_delays[source][destination]
-        if ((itDestination->second <= _maxDelay) && (itDestination->second >= _minDelay)) return itDestination->second;
-        else return default_delay; // guard against out of bounds values
+
+        if ((_type == SPECIFIC) && (itDestination->second <= _maxDelay) && (itDestination->second >= _minDelay)) return itDestination->second;
+        if ((_type == GEOMETRIC) && (itDestination->second <= _max_lambda) && (itDestination->second >= _min_lambda)) return itDestination->second;
+        else return default_value; // guard against out of bounds values
     }
     
     inline int Distribution::getDelay(long src, long dest){
@@ -235,15 +270,17 @@ namespace quantas{
                 delay = 1;
             }
             if (_type == SPECIFIC){
-                double link_delay = getGlobalDelay(src, dest);
+                double link_delay = getLinkValue(src, dest);
                 delay = static_cast<int>(link_delay);
                 return delay; // prevent from infinite loop if maxDelay is lower than delay
             }
             if (_type == GEOMETRIC){
-                double lambda = getGlobalDelay(src, dest);
+                double lambda = getLinkValue(src, dest);
                 const double p = 1.0 - exp(-lambda);
                 geometric_distribution<int> geom(p); 
                 delay = 1 + geom(RANDOM_GENERATOR);
+                if (delay > _maxDelay) return _maxDelay;
+                if (delay < _minDelay) return _minDelay;
                 return delay; // prevent from infinite loop if maxDelay is lower than delay
             }
             // guard against 0 and negative numbers

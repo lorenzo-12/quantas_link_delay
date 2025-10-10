@@ -19,8 +19,10 @@ PROJECT_DIR := quantas
 #  configure this for the specific algorithm and input file
 #
 
-INPUTFILE := bracha.json
-ALGFILE := BrachaPeer
+#----->
+INPUTFILE := alg23.json
+ALGFILE := Alg23Peer
+#<-----
 
 #INPUTFILE := bracha.json
 #ALGFILE := BrachaPeer

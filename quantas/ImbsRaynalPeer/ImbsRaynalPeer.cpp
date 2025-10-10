@@ -74,7 +74,7 @@ namespace quantas {
 			m1.value = 1;
 
 			byzantine_broadcast(m0, m1, honest_group_0, honest_group_1);
-			cout << " sent byzantine init messages" << endl;
+			//cout << " sent byzantine init messages" << endl;
 		}
 
 		if (!is_byzantine && getRound() == 0 && id() == sender) {

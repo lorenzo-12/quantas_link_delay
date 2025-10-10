@@ -41,7 +41,9 @@ namespace quantas {
 		vector<double> delivery_nodes;
 		vector<double> delivery_time;
 		vector<double> disagreement;
+		vector<double> disagreement_frequency;
 		vector<double> termination_rate;
+		
 
 		void setParameters(int _n, int _f, int _p){
 			n = _n;
@@ -113,7 +115,7 @@ namespace quantas {
 				}
 			}
 
-			if (counter==0) return {0.0, 0.0, 0.0, string("0% (0/0)")};
+			if (counter==0) return {0.0, 0.0, 0.0, 0.0, string("0% (0/0)")};
 
 			avg_delivery = sum_delivery / counter;
 			avg_delivery_time = sum_delivery_time / counter;
@@ -121,7 +123,7 @@ namespace quantas {
 			termination_percentage = to_string(tp)+"% ("+to_string(termination_sum)+"/"+to_string(termination_rate.size())+")";
 			if (counter_disagreement==0) avg_disagreement = 0;
 			else avg_disagreement = sum_disagreement / counter_disagreement;
-			return {avg_delivery, avg_delivery_time, avg_disagreement, termination_percentage};
+			return {avg_delivery, avg_delivery_time, avg_disagreement, (double)counter_disagreement, termination_percentage};
 		}
 
 		json getResults(){
@@ -134,7 +136,8 @@ namespace quantas {
 			results["avg_delivery"] = std::any_cast<double>(results_collected[0]);
 			results["avg_delivery_time"] = std::any_cast<double>(results_collected[1]);
 			results["avg_disagreement"] = std::any_cast<double>(results_collected[2]);
-			results["termination_rate"] = std::any_cast<string>(results_collected[3]);
+			results["disagreement_frequency"] = std::any_cast<double>(results_collected[3]);
+			results["termination_rate"] = std::any_cast<string>(results_collected[4]);
 			return results;
 		}
 
