@@ -210,6 +210,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -424,6 +425,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -638,6 +640,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -852,6 +855,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -1066,6 +1070,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -1280,6 +1285,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f20_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -1483,6 +1489,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -1687,6 +1694,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -1891,6 +1899,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -2095,6 +2104,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -2299,6 +2309,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -2503,6 +2514,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f30_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -2701,6 +2713,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -2900,6 +2913,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -3099,6 +3113,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -3298,6 +3313,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -3497,6 +3513,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -3696,6 +3713,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f35_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -3889,6 +3907,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -4083,6 +4102,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -4277,6 +4297,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -4471,6 +4492,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -4665,6 +4687,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -4859,6 +4882,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f40_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5047,6 +5071,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5236,6 +5261,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5425,6 +5451,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5614,6 +5641,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5803,6 +5831,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -5992,6 +6021,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f45_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -6175,6 +6205,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p100.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -6359,6 +6390,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p90.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -6543,6 +6575,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p80.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -6727,6 +6760,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p70.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -6911,6 +6945,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p60.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         },
@@ -7095,6 +7130,7 @@
                 "totalPeers": 100
             },
             "logFile": "results/alg24/n100_f50_p50.json",
+            "algorithm": "alg24",
             "tests": 100,
             "rounds": 1000
         }

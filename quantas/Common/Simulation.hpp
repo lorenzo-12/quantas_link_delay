@@ -50,7 +50,7 @@ namespace quantas {
 			f = _f;
 			c = n - f;
 			p = _p;
-			cout << "n=" << n << ", f=" << f << ", c=" << c << ", p=" << p << endl;
+			//cout << "n=" << n << ", f=" << f << ", c=" << c << ", p=" << p << endl;
 		}
 	
 		void addResult(vector<int> final_values, vector<int> final_times){
@@ -183,6 +183,7 @@ namespace quantas {
 		if (config.contains("threadCount") && config["threadCount"] > 0) {
 			_threadCount = config["threadCount"];
 		}
+		cout << "Using " << _threadCount << " threads." << endl;
 		if (_threadCount > config["topology"]["totalPeers"]) {
 			_threadCount = config["topology"]["totalPeers"];
 		}
@@ -231,7 +232,17 @@ namespace quantas {
 			}
 			rc.addResult(final_values, final_times);
 
-			cout << "Test " << i + 1 << " completed." << endl;
+			//cout << "Test " << i + 1 << " completed." << endl;
+
+			ofstream status("status.txt", std::ios::app);
+			if (!status) {
+				std::cerr << "Error: could not open status.txt for writing\n";
+			}
+			if (status) {
+				status << config["algorithm"] << endl;
+				status.flush(); // ensure it hits disk promptly
+			}
+
 
 		}
 
