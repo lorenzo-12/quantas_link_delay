@@ -57,6 +57,7 @@ namespace quantas {
 		
 		finished_round = -1;
 		final_value = -1;
+		finishing_step = -1;
 		
 	}
 
@@ -155,6 +156,8 @@ namespace quantas {
 					final_value = m.value;
 					finished_round = getRound();
 					delivered = true;
+					if (sent_ack_msgs.size() == 1) finishing_step = 2;
+					else finishing_step = 3;
 					if (debug_prints) cout << " DELIVERED value " << final_value << endl;
 				}
 				// --------------------------------------------------------------------------------

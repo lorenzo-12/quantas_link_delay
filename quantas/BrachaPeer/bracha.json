@@ -199,7 +199,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -209,7 +209,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -414,7 +414,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -424,7 +424,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -629,7 +629,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -639,7 +639,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -844,7 +844,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -854,7 +854,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -1059,7 +1059,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -1069,7 +1069,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -1274,7 +1274,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -1284,7 +1284,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f20_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f20_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -1478,7 +1478,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -1488,7 +1488,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -1683,7 +1683,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -1693,7 +1693,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -1888,7 +1888,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -1898,7 +1898,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -2093,7 +2093,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -2103,7 +2103,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -2298,7 +2298,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -2308,7 +2308,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -2503,7 +2503,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -2513,7 +2513,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f30_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f30_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -2702,7 +2702,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -2712,7 +2712,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -2902,7 +2902,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -2912,7 +2912,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -3102,7 +3102,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -3112,7 +3112,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -3302,7 +3302,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -3312,7 +3312,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -3502,7 +3502,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -3512,7 +3512,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -3702,7 +3702,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -3712,7 +3712,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f35_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f35_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -3896,7 +3896,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -3906,7 +3906,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -4091,7 +4091,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -4101,7 +4101,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -4286,7 +4286,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -4296,7 +4296,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -4481,7 +4481,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -4491,7 +4491,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -4676,7 +4676,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -4686,7 +4686,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -4871,7 +4871,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -4881,7 +4881,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f40_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f40_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -5060,7 +5060,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -5070,7 +5070,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -5250,7 +5250,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -5260,7 +5260,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -5440,7 +5440,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -5450,7 +5450,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -5630,7 +5630,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -5640,7 +5640,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -5820,7 +5820,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -5830,7 +5830,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6010,7 +6010,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6020,7 +6020,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f45_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f45_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6194,7 +6194,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6204,7 +6204,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p100.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p100.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6379,7 +6379,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6389,7 +6389,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p90.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p90.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6564,7 +6564,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6574,7 +6574,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p80.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p80.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6749,7 +6749,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6759,7 +6759,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p70.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p70.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -6934,7 +6934,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -6944,7 +6944,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p60.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p60.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000
@@ -7119,7 +7119,7 @@
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 2,
+                "max_lambda": 0.5,
                 "global_lambda": 1,
                 "n": 100,
                 "links_delay": {}
@@ -7129,7 +7129,7 @@
                 "initialPeers": 100,
                 "totalPeers": 100
             },
-            "logFile": "results/bracha/n100_f50_p50.json",
+            "logFile": "results_all/uniform_005_05/bracha/n100_f50_p50.json",
             "algorithm": "bracha",
             "tests": 100,
             "rounds": 1000

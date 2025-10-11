@@ -1,0 +1,15 @@
+{
+    "Results": {
+        "avg_delivery": 100.0,
+        "avg_delivery_time": 6.702499999999998,
+        "avg_disagreement": 30.0,
+        "avg_finishing_steps": 4.0,
+        "c": 60,
+        "disagreement_frequency": 100.0,
+        "f": 40,
+        "n": 100,
+        "p": 70,
+        "termination_rate": "100.000000% (100/100)"
+    },
+    "RunTime": 393.590287387
+}

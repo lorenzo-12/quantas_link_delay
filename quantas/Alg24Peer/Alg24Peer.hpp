@@ -42,8 +42,9 @@ namespace quantas{
         int percentage;
         vector<interfaceId> honest_nodes;
 
-        int finished_round = -1;
-        int final_value = -1;
+        int finished_round;
+        int final_value;
+        int finishing_step;
         bool debug_prints;
         // -----------------------------------------
 

@@ -44,6 +44,7 @@ namespace quantas{
 
         int finished_round;
         int final_value;
+        int finishing_step;
         bool debug_prints;
         // -----------------------------------------
 

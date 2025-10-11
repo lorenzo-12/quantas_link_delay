@@ -65,6 +65,7 @@ namespace quantas {
 		
 		finished_round = -1;
 		final_value = -1;
+		finishing_step = -1;
 		
 	}
 
@@ -176,6 +177,7 @@ namespace quantas {
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
+					finishing_step = 2;
 					if (debug_prints) cout << " step 3: DELIVERED value " << final_value << endl;
 				}
 				// --------------------------------------------------------------------------------
@@ -228,6 +230,7 @@ namespace quantas {
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
+					finishing_step = 4;
 					if (debug_prints) cout << " step 5: DELIVERED value " << final_value << endl;
 				}
 				// --------------------------------------------------------------------------------

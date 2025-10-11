@@ -18,32 +18,57 @@ int getDelay(double lambda) {
     return 1 + geom(RANDOM_GENERATOR);
 }
 
-void test(double l){
-    map<double,int> res;
-    for(int i=0; i<10000; i++){
+int test(double l, map<int,string> m){
+    map<string,int> res;
+    int sum_val = 0;
+    for(int i=0; i<100000; i++){
         int x = getDelay(l);
-        res[x]++;
+        sum_val+=x;
+        string range_val = m[x];
+        res[range_val]++;
     }
     
-    for(auto v : res){
-        double p = ((double)v.second / 10000) * 100;
-        cout << v.first << " " << v.second << " " << p << "%" << endl;
+    vector<string> val = {"1","2","3","4-5","6-10","11-15","16-20","21-25"};
+    //for(auto v : res){
+    //    double p = ((double)v.second / 100000) * 100;
+    //    cout << v.first << " " << v.second << " " << p << "%" << endl;
+    //}
+    double avg_val = (double)sum_val/100000;
+    cout << "lambda = " << l <<  " --> avg_val: " << avg_val << endl;
+    for(auto v : val){
+        double p = ((double)res[v] / 100000) * 100;
+        if (res[v] > 0){
+            cout << v << " " << res[v] << " " << p << "%" << endl;
+        }
+        
     }
+    return avg_val;
 }
 
 int main() {
     
+    map<int,string> m;
+    m[1] = "1";
+    m[2] = "2";
+    m[3] = "3";
+    m[4] = "4-5";
+    m[5] = "4-5";
+    for (int i=6; i<40; i++){
+        int val_lower = int(i/5)*5+1;
+        int val_upper = val_lower+4;
+        m[i] = to_string(val_lower)+"-"+to_string(val_upper);
+    }
+    
     double l;
-    for (int i=1; i<=20; i++){
+    double sum_val = 0;
+    for (int i=1; i<=40; i++){
         l = i*0.05;
         cout << "---------- " << l << " ----------" << endl;
-        test(l);
+        sum_val += test(l,m);
         cout << "------------------------------" << endl << endl;
     }
 
-    int delay = getDelay(l);
-
-    cout << "Sampled delay: " << delay << '\n';
+    
     return 0;
 }
 

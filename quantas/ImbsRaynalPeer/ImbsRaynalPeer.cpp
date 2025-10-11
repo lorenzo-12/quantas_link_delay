@@ -56,6 +56,7 @@ namespace quantas {
 		
 		finished_round = -1;
 		final_value = -1;
+		finishing_step = -1;
 		
 	}
 
@@ -147,6 +148,8 @@ namespace quantas {
 					delivered = true;
 					finished_round = getRound();
 					final_value = m.value;
+					if (broadcast_witness.size() == 1) finishing_step = 2;
+					else finishing_step = 3;
 					if (debug_prints) cout << " DELIVERED value " << final_value << " in round " << finished_round << endl;
 				}
 				// --------------------------------------------------------------------------------

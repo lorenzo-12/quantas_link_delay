@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License along with QUA
 #include <fstream>
 #include <any>
 #include <string>
+#include <map>
 
 #include "Network.hpp"
 #include "LogWriter.hpp"
@@ -28,6 +29,24 @@ You should have received a copy of the GNU General Public License along with QUA
 
 using std::ofstream;
 using std::thread;
+
+inline int getReadyType(map<long, int> echo_msgs, int final_value, int echo_threshold){
+	int count_echo = 0;
+	for (const auto& m : echo_msgs) {
+		if (m.second == final_value) count_echo++;
+	}
+	if (count_echo >= echo_threshold) return 1;
+	return 2;
+}
+
+inline int getSteps(vector<int> node_ready_types, int delivery_threshold){
+	int count_type1 = 0;
+	for (int t : node_ready_types){
+		if (t == 1) count_type1++;
+	}
+	if (count_type1 >= delivery_threshold) return 3;
+	return 4;
+}
 
 namespace quantas {
 
@@ -43,6 +62,7 @@ namespace quantas {
 		vector<double> disagreement;
 		vector<double> disagreement_frequency;
 		vector<double> termination_rate;
+		vector<int> finishing_steps;
 		
 
 		void setParameters(int _n, int _f, int _p){
@@ -53,7 +73,7 @@ namespace quantas {
 			//cout << "n=" << n << ", f=" << f << ", c=" << c << ", p=" << p << endl;
 		}
 	
-		void addResult(vector<int> final_values, vector<int> final_times){
+		void addResult(vector<int> final_values, vector<int> final_times, int step){
 			int counter_node_terminated = 0;
 			int sum_delivery_time = 0;
 			int counter_vote_0 = 0;
@@ -72,6 +92,7 @@ namespace quantas {
 				delivery_time.push_back(0);
 				disagreement.push_back(0);
 				termination_rate.push_back(0);
+				finishing_steps.push_back(0);
 			}
 			else{
 				delivery_nodes.push_back((double)counter_node_terminated *100 / c);
@@ -82,6 +103,7 @@ namespace quantas {
 				double sum_vote = counter_vote_0 + counter_vote_1;
 				double dis = min_vote *100 / sum_vote;
 				disagreement.push_back(dis);
+				finishing_steps.push_back(step);
 			}
 			
 		}
@@ -97,10 +119,14 @@ namespace quantas {
 			string termination_percentage;
 			int counter = 0;
 			int counter_disagreement = 0;
+			int counter_finishing_steps = 0;
+			int sum_finishing_steps = 0;
+			double avg_finishing_steps = 0;
 			for (int i=0; i<delivery_nodes.size(); i++){
 				double x = delivery_nodes[i];
 				double y = delivery_time[i];
 				double z = disagreement[i];
+				int s = finishing_steps[i];
 				termination_sum += termination_rate[i];
 
 				if (x!=0 && y != 0){
@@ -113,9 +139,14 @@ namespace quantas {
 					sum_disagreement += z;
 					counter_disagreement++;
 				}
+
+				if (s!=0){
+					counter_finishing_steps ++;
+					sum_finishing_steps += s;
+				}
 			}
 
-			if (counter==0) return {0.0, 0.0, 0.0, 0.0, string("0% (0/0)")};
+			if (counter==0) return {0.0, 0.0, 0.0, 0.0, 0.0, string("0% (0/0)")};
 
 			avg_delivery = sum_delivery / counter;
 			avg_delivery_time = sum_delivery_time / counter;
@@ -123,7 +154,9 @@ namespace quantas {
 			termination_percentage = to_string(tp)+"% ("+to_string(termination_sum)+"/"+to_string(termination_rate.size())+")";
 			if (counter_disagreement==0) avg_disagreement = 0;
 			else avg_disagreement = sum_disagreement / counter_disagreement;
-			return {avg_delivery, avg_delivery_time, avg_disagreement, (double)counter_disagreement, termination_percentage};
+			if (counter_finishing_steps==0) avg_finishing_steps = 0;
+			else avg_finishing_steps = (double)sum_finishing_steps / counter_finishing_steps;
+			return {avg_delivery, avg_delivery_time, avg_disagreement, (double)counter_disagreement, avg_finishing_steps, termination_percentage};
 		}
 
 		json getResults(){
@@ -137,7 +170,8 @@ namespace quantas {
 			results["avg_delivery_time"] = std::any_cast<double>(results_collected[1]);
 			results["avg_disagreement"] = std::any_cast<double>(results_collected[2]);
 			results["disagreement_frequency"] = std::any_cast<double>(results_collected[3]);
-			results["termination_rate"] = std::any_cast<string>(results_collected[4]);
+			results["avg_finishing_steps"] = std::any_cast<double>(results_collected[4]);
+			results["termination_rate"] = std::any_cast<string>(results_collected[5]);
 			return results;
 		}
 
@@ -161,16 +195,18 @@ namespace quantas {
 	void Simulation<type_msg, peer_type>::run(json config) {
 		ofstream out;
 		if (config["logFile"] == "cout") {
+			//cout << "Writing log to console" << endl;
 			LogWriter::instance()->setLog(cout); // Set the log file to the console
 		}
 		else {
 			string file = config["logFile"];
 			out.open(file);
 			if (out.fail()) {
-				cout << "Error: could not open file " << file << ". Writing to console" << endl;
+				//cout << "Error: could not open file " << file << ". Writing to console" << endl;
 				LogWriter::instance()->setLog(cout); // If the file doesn't open set the log file to the console
 			}
 			else {
+				//cout << "Writing log to file " << file << endl;
 				LogWriter::instance()->setLog(out); // Otherwise set the log file to the user given file
 			}
 		}
@@ -225,12 +261,37 @@ namespace quantas {
 			
 			vector<int> final_values;
 			vector<int> final_times;
-			for (auto const& p : system.peers()){
-				auto bp = dynamic_cast<peer_type*>(p);
-				final_values.push_back(bp->final_value);
-				final_times.push_back(bp->finished_round);
+			vector<int> final_steps;
+			int finishing_step = 0;
+			int delivery_threshold = 0;
+
+			/* // comment start bracha
+			if (config["algorithm"] == "bracha"){
+				for (auto const& p : system.peers()){
+					auto bp = dynamic_cast<peer_type*>(p);
+					final_values.push_back(bp->final_value);
+					final_times.push_back(bp->finished_round);
+					delivery_threshold = bp->delivery_threshold; 
+					final_steps.push_back(getReadyType(bp->echo_msgs, bp->final_value, bp->echo_threshold));
+				}
+				finishing_step = getSteps(final_steps, delivery_threshold);
+				rc.addResult(final_values, final_times, finishing_step);
 			}
-			rc.addResult(final_values, final_times);
+			// comment end bracha */
+
+			// comment start other
+			if (config["algorithm"] != "bracha"){
+				for (auto const& p : system.peers()){
+					auto bp = dynamic_cast<peer_type*>(p);
+					final_values.push_back(bp->final_value);
+					final_times.push_back(bp->finished_round);
+					final_steps.push_back(bp->finishing_step);
+				}
+				finishing_step = *std::max_element(final_steps.begin(), final_steps.end());
+				rc.addResult(final_values, final_times, finishing_step);
+			}
+			// end comment other */
+
 
 			//cout << "Test " << i + 1 << " completed." << endl;
 

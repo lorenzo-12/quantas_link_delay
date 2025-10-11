@@ -3,36 +3,37 @@
         {
             "parameters": {
                 "debug_prints": true,
-                "n": 4,
+                "n": 7,
                 "f": 1,
                 "percentage": 100,
                 "byzantine_nodes": [
-                    1,0,0,0
+                    1,0,0,0,0,0,0
                 ],
                 "sender": 0,
                 "honest_group_0": [
-                    1,2,3
+                    1,2,3,4,5,6
                 ],
                 "honest_group_1": [
                     
                 ]
             },
             "distribution": {
-                "type": "GEOMETRIC",
+                "type": "ONE",
                 "maxDelay": 10,
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
                 "max_lambda": 0.06,
-                "n": 4,
+                "n": 7,
                 "links_delay": {}
             },
             "topology": {
                 "type": "fullyComplete",
-                "initialPeers": 4,
-                "totalPeers": 4
+                "initialPeers": 7,
+                "totalPeers": 7
             },
-            "logFile": "alg23_test_log.json",
+            "logFile": "results_all/uniform_005_1/alg23/alg23_test_log.json",
+            "algorithm": "alg23",
             "threadCount": 1,
             "tests": 1,
             "rounds": 10
