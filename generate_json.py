@@ -112,6 +112,7 @@ for alg, alg_class in alg_list:
                     json.dump({}, log_file)
                 exp["tests"] = 100
                 exp["rounds"] = 1000
+                exp["algorithm"] = alg
                     
                 experiments["experiments"].append(exp)
     
@@ -124,65 +125,3 @@ for alg, alg_class in alg_list:
     
 
 
-"""
-for alg, alg_class in alg_list:
-    (results_dir / alg).mkdir(parents=True, exist_ok=True)
-    experiments = {} 
-    experiments["experiments"] = []
-    for n in n_list:
-        for f in f_list:
-            for p in p_list:
-                with open(base_file, 'r') as base_f:
-                    data = json.load(base_f)
-                    del data['experiments'][0]
-
-                exp = {}
-                
-                exp["parameters"] = {}
-                exp["distribution"] = {}
-                exp["topology"] = {}
-                
-                parameters = exp["parameters"]
-                parameters["debug_prints"] = False
-                parameters["n"] = n
-                parameters["f"] = f
-                parameters["percentage"] = p
-                byz_vec, vec = getByzantineVector(n,f)
-                parameters["byzantine_nodes"] = vec
-                parameters["sender"] = getByzantineSender(byz_vec)
-                honest_group_0, honest_group_1 = get_honest_groups(n, p, byz_vec)
-                parameters["honest_group_0"] = honest_group_0
-                parameters["honest_group_1"] = honest_group_1
-
-                distribution = exp["distribution"]
-                distribution["type"] = "GEOMETRIC"
-                #distribution["type"] = "UNIFORM"
-                distribution["maxDelay"] = 10
-                distribution["global_delay"] = 5
-                distribution["global_delays_setting"] = "uniform"
-                distribution["min_lambda"] = 0.05
-                distribution["max_lambda"] = 2.0
-                distribution["n"] = n
-                distribution["links_delay"] = {}
-                #distribution["links_delay"] = getGlobalDelays_distribution(n) 
-                
-                topology = exp["topology"]
-                topology["type"] = "fullyComplete"
-                topology["initialPeers"] = n
-                topology["totalPeers"] = n 
-
-                exp["logFile"] = f"results/{alg}/n{n}_f{f}_p{p}.json"
-                file_path_on_disk = results_dir / alg / f"n{n}_f{f}_p{p}.json"
-                with open(file_path_on_disk, 'w') as log_file:
-                    json.dump({}, log_file)
-                exp["tests"] = 100
-                exp["rounds"] = 1000
-                    
-                experiments["experiments"].append(exp)
-
-    print(alg, alg_class)
-    file_name = f"{alg}.json"
-    file_path = dir_file_json / alg_class / file_name       
-    with open(file_path, 'w') as f:
-        json.dump(experiments, f, indent=4)
-"""

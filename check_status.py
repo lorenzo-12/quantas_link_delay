@@ -6,6 +6,14 @@ import time
 import signal
 import sys
 
+
+bracha_file = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer" / "bracha.json"
+alg23_file = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer" / "alg23.json"
+alg24_file = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer" / "alg24.json"
+imbsraynal_file = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer" / "imbsraynal.json"
+def get_total_tests():
+    pass
+
 status_file = pathlib.Path(__file__).parent / "status.txt"
 def reader_status():
     with open(status_file, "r") as f:
