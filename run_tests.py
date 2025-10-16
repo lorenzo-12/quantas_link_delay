@@ -117,7 +117,7 @@ def run_test(alg_peer, alg_json):
 def reader_status():
     with open(status_file, "r") as f:
         lines = f.readlines()
-    tests = 36*100
+    tests = 18*100
     alg23 = 0
     alg24 = 0
     bracha = 0

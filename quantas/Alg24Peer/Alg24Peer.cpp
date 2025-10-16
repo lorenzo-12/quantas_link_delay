@@ -31,6 +31,7 @@ namespace quantas {
 		
 		int f = parameters["f"];
 		int n = parameters["n"];
+		network_size = n;
 		sender = parameters["sender"];
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
@@ -66,6 +67,7 @@ namespace quantas {
 		finished_round = -1;
 		final_value = -1;
 		finishing_step = -1;
+		total_msgs_sent = 0;
 		
 	}
 
@@ -93,6 +95,7 @@ namespace quantas {
 			m0.source = id();
 			m0.value = 0;
 			broadcast(m0);
+			total_msgs_sent  += network_size;
 			if (debug_prints) cout << " sent honest propose message" << endl;
 		}
 
@@ -148,6 +151,7 @@ namespace quantas {
 				ack_msg.source = id();
 				ack_msg.value = m.value;
 				broadcast(ack_msg);
+				total_msgs_sent  += network_size;
 				ack_sent = true;
 				if (debug_prints) printf("--> step 2: (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
 			}
@@ -163,6 +167,7 @@ namespace quantas {
 					vote1_msg.source = id();
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
+					total_msgs_sent  += network_size;
 					vote1_sent = true;
 					if (debug_prints) printf("--> step 3: (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 
@@ -171,6 +176,7 @@ namespace quantas {
 					vote2_msg.source = id();
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
+					total_msgs_sent  += network_size;
 					vote2_sent = true;
 					if (debug_prints) printf("--> step 3: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 
@@ -190,6 +196,7 @@ namespace quantas {
 					vote1_msg.source = id();
 					vote1_msg.value = m.value;
 					broadcast(vote1_msg);
+					total_msgs_sent  += network_size;
 					vote1_sent = true;
 					if (debug_prints) printf("--> step 4.1: (%s, %ld, %d)\n", vote1_msg.type.c_str(), vote1_msg.source, vote1_msg.value);
 				}
@@ -204,6 +211,7 @@ namespace quantas {
 					vote2_msg.source = id();
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
+					total_msgs_sent  += network_size;
 					vote2_sent = true;
 					if (debug_prints) printf("--> step 4.2: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}
@@ -219,6 +227,7 @@ namespace quantas {
 					vote2_msg.source = id();
 					vote2_msg.value = m.value;
 					broadcast(vote2_msg);
+					total_msgs_sent  += network_size;
 					vote2_sent = true;
 					if (debug_prints) printf("--> step 4.3: (%s, %ld, %d)\n", vote2_msg.type.c_str(), vote2_msg.source, vote2_msg.value);
 				}

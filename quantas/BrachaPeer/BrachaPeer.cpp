@@ -35,6 +35,7 @@ namespace quantas {
 		
 		int f = parameters["f"];
 		int n = parameters["n"];
+		network_size = n;
 		sender = parameters["sender"];
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
@@ -62,6 +63,7 @@ namespace quantas {
 		ready_msgs.clear();
 		finished_round = -1;
 		final_value = -1;
+		total_msgs_sent = 0;
 
 	}
 
@@ -89,6 +91,7 @@ namespace quantas {
 			m0.type = "send";
 			m0.value = 0;
 			broadcast(m0);
+			total_msgs_sent  += network_size;
 			if (debug_prints) cout << " sent honest send messages" << endl;
 		}
 
@@ -142,6 +145,7 @@ namespace quantas {
 				echo_m.type = "echo";
 				echo_m.value = m.value;
 				broadcast(echo_m);
+				total_msgs_sent  += network_size;
 				if (debug_prints) printf("--> (%s, %ld, %d)\n", echo_m.type.c_str(), echo_m.source, echo_m.value);
 			}
 			// ------------------------------------------------------------------------------------
@@ -156,6 +160,7 @@ namespace quantas {
 				ready_msg.type = "ready";
 				ready_msg.value = echo_val;
 				broadcast(ready_msg);
+				total_msgs_sent  += network_size;
 				if (debug_prints) printf("--> (%s, %ld, %d)\n", ready_msg.type.c_str(), ready_msg.source, ready_msg.value);
 			}
 
@@ -167,6 +172,7 @@ namespace quantas {
 				ready_msg.type = "ready";
 				ready_msg.value = ready_val;
 				broadcast(ready_msg);
+				total_msgs_sent  += network_size;
 				if (debug_prints) printf("--> (%s, %ld, %d)\n", ready_msg.type.c_str(), ready_msg.source, ready_msg.value);
 			}
 			// ------------------------------------------------------------------------------------

@@ -31,6 +31,7 @@ namespace quantas {
 		
 		int f = parameters["f"];
 		int n = parameters["n"];
+		network_size = n;
 		sender = parameters["sender"];
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
@@ -57,6 +58,7 @@ namespace quantas {
 		finished_round = -1;
 		final_value = -1;
 		finishing_step = -1;
+		total_msgs_sent = 0;
 		
 	}
 
@@ -84,6 +86,7 @@ namespace quantas {
 			m0.source = id();
 			m0.value = 0;
 			broadcast(m0);
+			total_msgs_sent  += network_size;
 			cout << " sent honest init messages" << endl;
 		}
 
@@ -126,6 +129,7 @@ namespace quantas {
 					msg.source = m.source;
 					msg.value = m.value;
 					broadcast(msg);
+					total_msgs_sent  += network_size;
 					if (debug_prints) printf("--> (%s, %ld, %d)\n", msg.type.c_str(), msg.source, msg.value);
 				}
 				received_init.push_back(make_pair(m.source, m.value));
@@ -138,6 +142,7 @@ namespace quantas {
 				if( (check_witness(m.source, m.value)!=-1) && (!contains(broadcast_witness, m.source, m.value))) {
 					broadcast_witness.push_back(make_pair(m.source, m.value));
 					broadcast(m);
+					total_msgs_sent  += network_size;
 					if (debug_prints) printf("--> (%s, %ld, %d)\n", m.type.c_str(), m.source, m.value);
 				}
 				// --------------------------------------------------------------------------------

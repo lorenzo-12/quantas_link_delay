@@ -63,6 +63,7 @@ namespace quantas {
 		vector<double> disagreement_frequency;
 		vector<double> termination_rate;
 		vector<int> finishing_steps;
+		vector<int> total_msgs_sent;
 		
 
 		void setParameters(int _n, int _f, int _p){
@@ -73,20 +74,24 @@ namespace quantas {
 			//cout << "n=" << n << ", f=" << f << ", c=" << c << ", p=" << p << endl;
 		}
 	
-		void addResult(vector<int> final_values, vector<int> final_times, int step){
+		void addResult(vector<int> final_values, vector<int> final_times, int step, vector<int> total_msgs){
 			int counter_node_terminated = 0;
 			int sum_delivery_time = 0;
 			int counter_vote_0 = 0;
 			int counter_vote_1 = 0;
+			int counter_total_msgs_sent = 0;
 			for (int i=0; i<final_values.size(); i++){
 				int v = final_values[i];
 				int t = final_times[i];
+				int m = total_msgs[i];
+				counter_total_msgs_sent += m;
 				if (v != -1) counter_node_terminated++;
 				if (v == 0) counter_vote_0++;
 				if (v == 1) counter_vote_1++;
 				if (t != -1) sum_delivery_time += t;
 			}
 			
+			total_msgs_sent.push_back(counter_total_msgs_sent);
 			if (sum_delivery_time==0 || counter_node_terminated==0){
 				delivery_nodes.push_back(0);
 				delivery_time.push_back(0);
@@ -110,11 +115,13 @@ namespace quantas {
 
 		vector<any> collectResults(){
 			double sum_delivery = 0;
-			double sum_delivery_time = 0;
-			double sum_disagreement = 0;
 			double avg_delivery = 0;
+			double sum_delivery_time = 0;
 			double avg_delivery_time = 0;
+			double sum_disagreement = 0;
 			double avg_disagreement = 0;
+			double sum_total_msgs_sent = 0;
+			double avg_total_msgs_sent = 0;
 			int termination_sum = 0;
 			string termination_percentage;
 			int counter = 0;
@@ -128,6 +135,7 @@ namespace quantas {
 				double z = disagreement[i];
 				int s = finishing_steps[i];
 				termination_sum += termination_rate[i];
+				sum_total_msgs_sent += total_msgs_sent[i];
 
 				if (x!=0 && y != 0){
 					sum_delivery += x;
@@ -146,7 +154,8 @@ namespace quantas {
 				}
 			}
 
-			if (counter==0) return {0.0, 0.0, 0.0, 0.0, 0.0, string("0% (0/0)")};
+			avg_total_msgs_sent = sum_total_msgs_sent / total_msgs_sent.size();
+			if (counter==0) return {0.0, 0.0, 0.0, 0.0, 0.0, avg_total_msgs_sent, string("0% (0/0)")};
 
 			avg_delivery = sum_delivery / counter;
 			avg_delivery_time = sum_delivery_time / counter;
@@ -156,7 +165,7 @@ namespace quantas {
 			else avg_disagreement = sum_disagreement / counter_disagreement;
 			if (counter_finishing_steps==0) avg_finishing_steps = 0;
 			else avg_finishing_steps = (double)sum_finishing_steps / counter_finishing_steps;
-			return {avg_delivery, avg_delivery_time, avg_disagreement, (double)counter_disagreement, avg_finishing_steps, termination_percentage};
+			return {avg_delivery, avg_delivery_time, avg_disagreement, (double)counter_disagreement, avg_finishing_steps, avg_total_msgs_sent, termination_percentage};
 		}
 
 		json getResults(){
@@ -171,7 +180,8 @@ namespace quantas {
 			results["avg_disagreement"] = std::any_cast<double>(results_collected[2]);
 			results["disagreement_frequency"] = std::any_cast<double>(results_collected[3]);
 			results["avg_finishing_steps"] = std::any_cast<double>(results_collected[4]);
-			results["termination_rate"] = std::any_cast<string>(results_collected[5]);
+			results["avg_total_msgs_sent"] = std::any_cast<double>(results_collected[5]);
+			results["termination_rate"] = std::any_cast<string>(results_collected[6]);
 			return results;
 		}
 
@@ -262,6 +272,7 @@ namespace quantas {
 			vector<int> final_values;
 			vector<int> final_times;
 			vector<int> final_steps;
+			vector<int> total_msgs_sent;
 			int finishing_step = 0;
 			int delivery_threshold = 0;
 
@@ -273,9 +284,10 @@ namespace quantas {
 					final_times.push_back(bp->finished_round);
 					delivery_threshold = bp->delivery_threshold; 
 					final_steps.push_back(getReadyType(bp->echo_msgs, bp->final_value, bp->echo_threshold));
+					total_msgs_sent.push_back(bp->total_msgs_sent);
 				}
 				finishing_step = getSteps(final_steps, delivery_threshold);
-				rc.addResult(final_values, final_times, finishing_step);
+				rc.addResult(final_values, final_times, finishing_step, total_msgs_sent);
 			}
 			// comment end bracha */
 
@@ -286,9 +298,10 @@ namespace quantas {
 					final_values.push_back(bp->final_value);
 					final_times.push_back(bp->finished_round);
 					final_steps.push_back(bp->finishing_step);
+					total_msgs_sent.push_back(bp->total_msgs_sent);
 				}
 				finishing_step = *std::max_element(final_steps.begin(), final_steps.end());
-				rc.addResult(final_values, final_times, finishing_step);
+				rc.addResult(final_values, final_times, finishing_step, total_msgs_sent);
 			}
 			// end comment other */
 

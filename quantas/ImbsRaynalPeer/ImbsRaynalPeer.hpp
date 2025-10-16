@@ -49,6 +49,8 @@ namespace quantas{
         int final_value;
         int finishing_step;
         bool debug_prints;
+        int total_msgs_sent;
+        int network_size;
         // -----------------------------------------
 
         // ----- Algorithm specific parameters -----
