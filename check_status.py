@@ -5,20 +5,31 @@ import threading
 import time
 import signal
 import sys
+import json
 
+TOTAL_TESTS = 0
 
 bracha_file = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer" / "bracha.json"
 alg23_file = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer" / "alg23.json"
 alg24_file = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer" / "alg24.json"
 imbsraynal_file = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer" / "imbsraynal.json"
-def get_total_tests():
-    pass
+def set_total_tests():
+    tests = 0
+    x = 0
+    with open(bracha_file, "r") as f:
+        js = json.load(f)
+    x = len(js["experiments"])
+    tests = int(js["experiments"][0]["tests"])
+    global TOTAL_TESTS
+    TOTAL_TESTS = x*tests
+    print(TOTAL_TESTS)
+        
 
 status_file = pathlib.Path(__file__).parent / "status.txt"
 def reader_status():
     with open(status_file, "r") as f:
         lines = f.readlines()
-    tests = 36*100
+    tests = TOTAL_TESTS
     alg23 = 0
     alg24 = 0
     bracha = 0
@@ -47,6 +58,8 @@ def reader_status():
     print("")
     
 
+set_total_tests()
 while True:
     reader_status()
     time.sleep(1)
+    

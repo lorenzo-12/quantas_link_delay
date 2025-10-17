@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#OAR -l {host='big19'}/core=48,walltime=1000:0:0
+#OAR -l {host='big18'}/core=48,walltime=1000:0:0
 
 source /etc/profile.d/modules.sh		# Shell initialization to use module
 module purge							# Environment cleanup

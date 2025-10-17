@@ -1,1 +1,16 @@
-{}
+{
+    "Results": {
+        "avg_delivery": 20.161764705882327,
+        "avg_delivery_time": 1.131764705882355,
+        "avg_disagreement": 10.294117647058824,
+        "avg_finishing_steps": 2.22,
+        "avg_total_msgs_sent": 15792.36,
+        "c": 68,
+        "disagreement_frequency": 8.0,
+        "f": 33,
+        "n": 101,
+        "p": 90,
+        "termination_rate": "100.000000% (100/100)"
+    },
+    "RunTime": 330.305178653
+}

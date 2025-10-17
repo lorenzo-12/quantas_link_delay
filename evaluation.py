@@ -28,7 +28,6 @@ def get_data(file_name):
         data = json.load(f)
     return data["Results"]
 
-
 def draw_plots_info(alg):
     f_values = [20, 30, 35, 40, 45, 50]
     p_values = [50, 60, 70, 80, 90, 100]
