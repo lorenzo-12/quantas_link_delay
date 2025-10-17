@@ -169,7 +169,7 @@ namespace quantas {
 		}
 
 		json getResults(){
-			json results;
+			/* json results;
 			vector<any> results_collected = collectResults();
 			results["n"] = n;
 			results["f"] = f;
@@ -182,6 +182,20 @@ namespace quantas {
 			results["avg_finishing_steps"] = std::any_cast<double>(results_collected[4]);
 			results["avg_total_msgs_sent"] = std::any_cast<double>(results_collected[5]);
 			results["termination_rate"] = std::any_cast<string>(results_collected[6]);
+			return results; */
+
+			json results;
+			results["n"] = n;
+			results["f"] = f;
+			results["c"] = c;
+			results["p"] = p;
+			results["delivery_nodes"] = delivery_nodes;
+			results["delivery_time"] = delivery_time;
+			results["disagreement"] = disagreement;
+			results["disagreement_frequency"] = disagreement_frequency;
+			results["termination_rate"] = termination_rate;
+			results["finishing_steps"] = finishing_steps;
+			results["total_msgs_sent"] = total_msgs_sent;
 			return results;
 		}
 

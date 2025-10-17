@@ -2,6 +2,7 @@ import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+from scipy import stats
 
 
 dir_img = pathlib.Path(__file__).parent / "img"
@@ -10,6 +11,16 @@ dir_alg = dir_img / "<alg>"
 
 dict_results = {}
 algorithms = ["alg23", "alg24", "bracha", "imbsraynal"]
+
+def confidence_interval(data, confidence: float = 0.95):
+    data = np.array(data)
+    n = len(data)
+    if n < 2:
+        raise ValueError("At least two data points are required to compute a confidence interval.")
+    mean = np.mean(data)
+    sem = stats.sem(data)  # standard error of the mean
+    margin = sem * stats.t.ppf((1 + confidence) / 2.0, n - 1)
+    return mean - margin, mean + margin
 
 def get_param(file_name):
     file_name = file_name.replace(".json","").replace("n","").replace("f","").replace("p","")
@@ -172,6 +183,7 @@ for alg in algorithms:
         
         tmp = data["termination_rate"].split("%")[0]
         x["termination_rate"] = float(tmp)
+
 
 draw_plots_alg("avg_delivery")
 draw_plots_alg("avg_delivery_time")
