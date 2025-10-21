@@ -51,6 +51,7 @@ namespace quantas {
 		
 		ack_ack_threshold = n-2*f;
 		ack_delivery_threshold = n-f-1;
+		//if (id() == 0) cout << "Node " << id() << " ack_ack_threshold: " << ack_ack_threshold << ", ack_delivery_threshold: " << ack_delivery_threshold << endl;
 
 		delivered = false;
 		is_first_propose = true;
@@ -163,6 +164,8 @@ namespace quantas {
 					broadcast(ack_msg);
 					total_msgs_sent  += network_size;
 					sent_ack_msgs.push_back(ack_msg.value);
+					//cout << "Node " << id() << " sending ack for value " << m.value << " at round " << getRound() << " ";
+					//cout << "(acks for " << m.value << ": " << count(ack_msgs, m.value) << ")" << endl;
 					if (debug_prints) printf("--> (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
 				}
 				// --------------------------------------------------------------------------------
@@ -170,6 +173,8 @@ namespace quantas {
 
 				// ------------------------------ STEP 3: Commit ----------------------------------
 				if ((count(ack_msgs, m.value) >= ack_delivery_threshold) && (delivered == false)){
+					//cout << "Node " << id() << " delivering value " << m.value << " at round " << getRound() << " ";
+					//cout << "(acks for " << m.value << ": " << count(ack_msgs, m.value) << ")" << endl;
 					final_value = m.value;
 					finished_round = getRound();
 					delivered = true;

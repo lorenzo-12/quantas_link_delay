@@ -72,6 +72,7 @@ namespace quantas{
         int count(const map<long, int>& s, int value){
             int counter = 0;
             for (const auto& p : s) {
+                if (p.first == sender) continue;
                 if (p.second == value) counter++;
             }
             return counter;

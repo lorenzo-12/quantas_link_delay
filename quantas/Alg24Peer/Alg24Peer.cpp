@@ -176,10 +176,6 @@ namespace quantas {
 			return;
 		}
 
-		if (delivered) {
-			// Once delivered, do nothing
-			return;
-		}
 
 		if (debug_prints) cout << "node_" << id() << " -------------------------------------" << endl;
 		while (!inStreamEmpty()) {
@@ -197,6 +193,7 @@ namespace quantas {
 				broadcast(ack_msg);
 				total_msgs_sent  += network_size;
 				ack_sent = true;
+				is_first_propose = false;
 				if (debug_prints) printf("--> step 2: (%s, %ld, %d)\n", ack_msg.type.c_str(), ack_msg.source, ack_msg.value);
 			}
 			// ------------------------------------------------------------------------------------
