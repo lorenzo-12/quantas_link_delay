@@ -7,7 +7,7 @@ import signal
 import sys
 import json
 
-TOTAL_TESTS = 2400
+TOTAL_TESTS = 3000
 ALL_TESTS = []
 def get_all_tests():
     global ALL_TESTS
@@ -35,10 +35,33 @@ def reader_status():
 
     
     tmp = ""
-    for test_name in d:
-        count = d[test_name]
-        perc = min(int((count/TOTAL_TESTS)*100), 100)
-        tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
+    for test_name in sorted(d):
+        if ("alg23" in test_name):
+            count = d[test_name]
+            perc = min(int((count/TOTAL_TESTS)*100), 100)
+            tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
+    tmp += "\n"
+    
+    for test_name in sorted(d):
+        if ("alg24" in test_name):
+            count = d[test_name]
+            perc = min(int((count/TOTAL_TESTS)*100), 100)
+            tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
+    tmp += "\n"
+    
+    for test_name in sorted(d):
+        if ("bracha" in test_name):
+            count = d[test_name]
+            perc = min(int((count/TOTAL_TESTS)*100), 100)
+            tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
+    tmp += "\n"
+    
+    for test_name in sorted(d):
+        if ("imbsraynal" in test_name):
+            count = d[test_name]
+            perc = min(int((count/TOTAL_TESTS)*100), 100)
+            tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
+    
 
     os.system('clear')
     print("Status so far:")
@@ -48,5 +71,5 @@ def reader_status():
 get_all_tests()
 while True:
     reader_status()
-    time.sleep(1)
+    time.sleep(3)
 

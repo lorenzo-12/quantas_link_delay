@@ -20,8 +20,8 @@ PROJECT_DIR := quantas
 #
 
 #----->
-INPUTFILE := test.json
-ALGFILE := Alg23Peer
+INPUTFILE := alg24_same_opposite_silent.json
+ALGFILE := Alg24Peer
 #<-----
 
 #INPUTFILE := bracha.json

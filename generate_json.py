@@ -10,7 +10,7 @@ results_dir = pathlib.Path(__file__).parent / "results_all"
 
 alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer")]
 n_list = [100]
-f_list = [20, 25, 33, 40]
+f_list = [19, 20, 25, 33, 40]
 p_list = [100, 90, 80, 70, 60, 50]
 tests = 1000 
 

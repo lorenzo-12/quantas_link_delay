@@ -7,6 +7,16 @@ import signal
 import sys
 from queue import Queue
 import colorama 
+import argparse 
+
+parser = argparse.ArgumentParser(description="Run selected algorithm tests.")
+parser.add_argument(
+    "--alg",
+    type=str,
+    help="Algorithm to run (alg23, alg24, bracha, imbsraynal). Omit to run all.",
+)
+
+
 
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
@@ -16,7 +26,7 @@ makefile_file = pathlib.Path(__file__).parent / "makefile"
 status_file = pathlib.Path(__file__).parent / "status.txt"
 
 # --- 1) Empty the status file at start ---
-status_file.write_text("")  # truncate/clear
+#status_file.write_text("")  # truncate/clear
 
 start_time = time.time()
 
@@ -30,18 +40,23 @@ ALGORITHMS = [
 ]
 
 ALGORITHMS_TO_RUN = []
-def get_tests():
+def get_tests(alg_filter):
     global ALGORITHMS_TO_RUN
+    ALGORITHMS_TO_RUN.clear()
     directory_alg23 = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer"
     directory_alg24 = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer"
     directory_bracha = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer"
     directory_imbsraynal = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer"
-    dirs = [
-        (directory_alg23, "Alg23Peer"),
-        (directory_alg24, "Alg24Peer"),
-        (directory_bracha, "BrachaPeer"),
-        (directory_imbsraynal, "ImbsRaynalPeer"),
-    ]
+    dirs = []
+    if alg_filter == "alg23":
+        dirs = [(directory_alg23, "Alg23Peer")]
+    elif alg_filter == "alg24":
+        dirs = [(directory_alg24, "Alg24Peer")]
+    elif alg_filter == "bracha":
+        dirs = [(directory_bracha, "BrachaPeer")]
+    elif alg_filter == "imbsraynal":
+        dirs = [(directory_imbsraynal, "ImbsRaynalPeer")]
+
     for directory, alg_class in dirs:
         json_files = [f for f in os.listdir(directory) if f.endswith(".json") and "test" not in f]
         for json_file in json_files:
@@ -204,7 +219,8 @@ def main():
 
 
 if __name__ == "__main__":
-    get_tests()
+    args = parser.parse_args()
+    get_tests(args.alg)
     main()
     end_time = time.time()
     elapsed_time = end_time - start_time
