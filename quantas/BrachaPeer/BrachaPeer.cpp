@@ -40,6 +40,7 @@ namespace quantas {
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
 		honest_group_1 = parameters["honest_group_1"].get<vector<interfaceId>>();
+		combination = parameters["combination"].get<vector<string>>();
 
 		is_byzantine = true;
 		if (parameters["byzantine_nodes"][id()] == 0) is_byzantine = false;
@@ -100,21 +101,50 @@ namespace quantas {
 		// Honest nodes are split into two groups, each receiving a different value
 		// This simulates a worst-case scenario where Byzantine nodes try to cause maximum confusion
 		if (is_byzantine && getRound() == 0){
-			BrachaMessage m0;
-			m0.type = "echo";
-			m0.source = id();
-			m0.value = 0;
-			BrachaMessage m1;
-			m1.type = "echo";
-			m1.source = id();
-			m1.value = 1;
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+			BrachaMessage echo_m0;
+			echo_m0.type = "echo";
+			echo_m0.source = id();
+			echo_m0.value = 0;
+			BrachaMessage echo_m1;
+			echo_m1.type = "echo";
+			echo_m1.source = id();
+			echo_m1.value = 1;
+			BrachaMessage ready_m0;
+			ready_m0.type = "ready";
+			ready_m0.source = id();
+			ready_m0.value = 0;
+			BrachaMessage ready_m1;
+			ready_m1.type = "ready";
+			ready_m1.source = id();
+			ready_m1.value = 1;
 
-			m0.type = "ready";
-			m1.type = "ready";
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+			//cout << "Combination: " << combination[0] << " - " << combination[1] << "  -->  ";
+			if (combination[0] == "silent"){
+				// do nothing
+				//cout << "silent - ";
+			}
+			if (combination[0] == "same"){
+				byzantine_broadcast(echo_m0, echo_m1, honest_group_0, honest_group_1);
+				//cout << "same - ";
+			}
+			if (combination[0] == "opposite"){
+				byzantine_broadcast(echo_m0, echo_m1, honest_group_1, honest_group_0);
+				//cout << "opposite - ";
+			}
+			if (combination[1] == "silent"){
+				// do nothing
+				//cout << "silent" << endl;
+			}
+			if (combination[1] == "same"){
+				byzantine_broadcast(ready_m0, ready_m1, honest_group_0, honest_group_1);
+				//cout << "same" << endl;
+			}
+			if (combination[1] == "opposite"){
+				byzantine_broadcast(ready_m0, ready_m1, honest_group_1, honest_group_0);
+				//cout << "opposite" << endl;
+			}
+
+			
 		}
 		// ----------------------------------------------------------------------------------------
 

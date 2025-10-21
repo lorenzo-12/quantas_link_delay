@@ -27,4 +27,7 @@ quantas/TrailPeer/*Log.json
 quantas/TrailPeer/*logs*/**/*
 quantas/TrailPeer/*Logs*/**/*
 
-results_backup/*
+results_backup/
+results_all/
+*.stderr
+*.stdout

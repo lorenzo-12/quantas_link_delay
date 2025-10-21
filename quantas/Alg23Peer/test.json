@@ -2,41 +2,43 @@
     "experiments": [
         {
             "parameters": {
-                "debug_prints": true,
-                "n": 7,
-                "f": 1,
-                "percentage": 100,
+                "debug_prints": false,
+                "n": 10,
+                "f": 2,
+                "percentage": 50,
                 "byzantine_nodes": [
-                    1,0,0,0,0,0,0
+                    0,1
                 ],
                 "sender": 0,
                 "honest_group_0": [
-                    1,2,3,4,5,6
+                    2,3,4,5
                 ],
                 "honest_group_1": [
-                    
-                ]
+                    6,7,8,9
+                ],
+                "combination": "opposite"
             },
             "distribution": {
-                "type": "ONE",
+                "type": "GEOMETRIC",
                 "maxDelay": 10,
                 "global_delay": 5,
                 "global_delays_setting": "uniform",
                 "min_lambda": 0.05,
-                "max_lambda": 0.06,
-                "n": 7,
+                "max_lambda": 2,
+                "n": 10,
                 "links_delay": {}
             },
             "topology": {
                 "type": "fullyComplete",
-                "initialPeers": 7,
-                "totalPeers": 7
+                "initialPeers": 10,
+                "totalPeers": 10
             },
-            "logFile": "results_all/uniform_005_1/alg23/alg23_test_log.json",
-            "algorithm": "alg23",
-            "threadCount": 1,
+            "logFile": "test_bracha.json",
             "tests": 1,
-            "rounds": 10
+            "rounds": 1000,
+            "algorithm": "test",
+            "combination": "silent",
+            "output_status": "alg23_silent.json"
         }
     ]
 }

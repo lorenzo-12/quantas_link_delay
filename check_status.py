@@ -7,59 +7,46 @@ import signal
 import sys
 import json
 
-TOTAL_TESTS = 0
+TOTAL_TESTS = 2400
+ALL_TESTS = []
+def get_all_tests():
+    global ALL_TESTS
+    directory_alg23 = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer"
+    directory_alg24 = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer"
+    directory_bracha = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer"
+    directory_imbsraynal = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer"
+    dirs = [ directory_alg23, directory_alg24, directory_bracha, directory_imbsraynal ]
+    for directory in dirs:
+        l = [ file_name for file_name in os.listdir(directory) if file_name.endswith(".json") and "test" not in file_name]
+        ALL_TESTS.extend(l)
 
-bracha_file = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer" / "bracha.json"
-alg23_file = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer" / "alg23.json"
-alg24_file = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer" / "alg24.json"
-imbsraynal_file = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer" / "imbsraynal.json"
-def set_total_tests():
-    tests = 0
-    x = 0
-    with open(bracha_file, "r") as f:
-        js = json.load(f)
-    x = len(js["experiments"])
-    tests = int(js["experiments"][0]["tests"])
-    global TOTAL_TESTS
-    TOTAL_TESTS = x*tests
-    print(TOTAL_TESTS)
-        
 
 status_file = pathlib.Path(__file__).parent / "status.txt"
 def reader_status():
     with open(status_file, "r") as f:
         lines = f.readlines()
-    tests = TOTAL_TESTS
-    alg23 = 0
-    alg24 = 0
-    bracha = 0
-    imbsraynal = 0
+    d = {}
+    for f in ALL_TESTS:
+        d[f] = 0
     for line in lines:
         line = line.strip().replace('"',"")
-        if line == "alg23":
-            alg23 += 1
-        elif line == "alg24":
-            alg24 += 1
-        elif line == "bracha":
-            bracha += 1
-        elif line == "imbsraynal":
-            imbsraynal += 1
-    perc_alg23 = int((alg23/tests)*100)
-    perc_alg24 = int((alg24/tests)*100)
-    perc_bracha = int((bracha/tests)*100)
-    perc_imbsraynal = int((imbsraynal/tests)*100)
+        if line in ALL_TESTS:
+            d[line] +=1
+
+    
+    tmp = ""
+    for test_name in d:
+        count = d[test_name]
+        perc = min(int((count/TOTAL_TESTS)*100), 100)
+        tmp += f"{test_name:<40}: [{'#'*perc}{'.'*(100-perc)}] {perc:<3}%  - {count:>4}/{TOTAL_TESTS}\n"
 
     os.system('clear')
     print("Status so far:")
-    print(f"{'alg23':<12}: [{'#'*perc_alg23}{'.'*(100-perc_alg23)}] {perc_alg23:<3}%  - {alg23:>4}/{tests}")
-    print(f"{'alg24':<12}: [{'#'*perc_alg24}{'.'*(100-perc_alg24)}] {perc_alg24:<3}%  - {alg24:>4}/{tests}")
-    print(f"{'bracha':<12}: [{'#'*perc_bracha}{'.'*(100-perc_bracha)}] {perc_bracha:<3}%  - {bracha:>4}/{tests}")
-    print(f"{'imbsraynal':<12}: [{'#'*perc_imbsraynal}{'.'*(100-perc_imbsraynal)}] {perc_imbsraynal:<3}%  - {imbsraynal:>4}/{tests}")
-    print("")
+    print(tmp)
     
 
-set_total_tests()
+get_all_tests()
 while True:
     reader_status()
     time.sleep(1)
-    
+

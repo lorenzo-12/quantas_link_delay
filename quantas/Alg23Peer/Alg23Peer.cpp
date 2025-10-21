@@ -36,6 +36,7 @@ namespace quantas {
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
 		honest_group_1 = parameters["honest_group_1"].get<vector<interfaceId>>();
+		combination = parameters["combination"];
 
 		is_byzantine = true;
 		if (parameters["byzantine_nodes"][id()] == 0) is_byzantine = false;
@@ -94,8 +95,19 @@ namespace quantas {
 			m1.type = "ack";
 			m1.source = id();
 			m1.value = 1;
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+			//cout << "Combination: " << combination << "  -->  ";
+			if (combination == "silent"){
+				// do nothing
+				//cout << "silent" << endl;
+			}
+			if (combination == "same"){
+				byzantine_broadcast(m0, m1, honest_group_0, honest_group_1);
+				//cout << "same" << endl;
+			}
+			if (combination == "opposite"){
+				byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+				//cout << "opposite" << endl;
+			}
 		}
 
 		if (!is_byzantine && getRound() == 0 && id() == sender) {

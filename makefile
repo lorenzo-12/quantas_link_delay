@@ -20,7 +20,7 @@ PROJECT_DIR := quantas
 #
 
 #----->
-INPUTFILE := imbsraynal.json
+INPUTFILE := imbsraynal_same.json
 ALGFILE := ImbsRaynalPeer
 #<-----
 

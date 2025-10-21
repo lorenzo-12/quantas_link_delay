@@ -36,6 +36,7 @@ namespace quantas {
 		percentage = parameters["percentage"];
 		honest_group_0 = parameters["honest_group_0"].get<vector<interfaceId>>();
 		honest_group_1 = parameters["honest_group_1"].get<vector<interfaceId>>();
+		combination = parameters["combination"].get<vector<string>>();
 
 		is_byzantine = true;
 		if (parameters["byzantine_nodes"][id()] == 0) is_byzantine = false;
@@ -104,26 +105,69 @@ namespace quantas {
 		// Honest nodes are split into two groups, each receiving a different value
 		// This simulates a worst-case scenario where Byzantine nodes try to cause maximum confusion
 		if (is_byzantine && getRound() == 0){
-			Alg24Message m0;
-			m0.type = "ack";
-			m0.source = id();
-			m0.value = 0;
-			Alg24Message m1;
-			m1.type = "ack";
-			m1.source = id();
-			m1.value = 1;
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+			Alg24Message ack_m0;
+			ack_m0.type = "ack";
+			ack_m0.source = id();
+			ack_m0.value = 0;
+			Alg24Message ack_m1;
+			ack_m1.type = "ack";
+			ack_m1.source = id();
+			ack_m1.value = 1;
+            Alg24Message vote1_m0;
+			vote1_m0.type = "vote1";
+			vote1_m0.source = id();
+			vote1_m0.value = 0;
+			Alg24Message vote1_m1;
+			vote1_m1.type = "vote1";
+			vote1_m1.source = id();
+			vote1_m1.value = 1;
+			Alg24Message vote2_m0;
+			vote2_m0.type = "vote2";
+			vote2_m0.source = id();
+			vote2_m0.value = 0;
+			Alg24Message vote2_m1;
+			vote2_m1.type = "vote2";
+			vote2_m1.source = id();
+			vote2_m1.value = 1;
 
-			m0.type = "vote1";
-			m1.type = "vote1";
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
+			// cout << "Combination: " << combination[0] << " - " << combination[1] << " - " << combination[2] << "  -->  ";
+			if (combination[0] == "silent"){
+				// do nothing
+				//cout << "silent - ";
+			}
+			if (combination[0] == "same"){
+				byzantine_broadcast(ack_m0, ack_m1, honest_group_0, honest_group_1);
+				//cout << "same - ";
+			}
+			if (combination[0] == "opposite"){
+				byzantine_broadcast(ack_m0, ack_m1, honest_group_1, honest_group_0);
+				//cout << "opposite - ";
+			}
+			if (combination[1] == "silent"){
+				// do nothing
+				//cout << "silent - ";
+			}
+			if (combination[1] == "same"){
+				byzantine_broadcast(vote1_m0, vote1_m1, honest_group_0, honest_group_1);
+				//cout << "same - ";
+			}
+			if (combination[1] == "opposite"){
+				byzantine_broadcast(vote1_m0, vote1_m1, honest_group_1, honest_group_0);
+				//cout << "opposite - ";
+			}
+			if (combination[2] == "silent"){
+				// do nothing
+				//cout << "silent" << endl;
+			}
+			if (combination[2] == "same"){
+				byzantine_broadcast(vote2_m0, vote2_m1, honest_group_0, honest_group_1);
+				//cout << "same" << endl;
+			}
+			if (combination[2] == "opposite"){
+				byzantine_broadcast(vote2_m0, vote2_m1, honest_group_1, honest_group_0);
+				//cout << "opposite" << endl;
+			}
 
-			m0.type = "vote2";
-			m1.type = "vote2";
-			// sends m0 to honest_group_1 and m1 to honest_group_0
-			byzantine_broadcast(m0, m1, honest_group_1, honest_group_0);
 		}
 		// ----------------------------------------------------------------------------------------
 

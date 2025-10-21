@@ -9,10 +9,27 @@ base_file = pathlib.Path(__file__).parent / "base.json"
 results_dir = pathlib.Path(__file__).parent / "results_all"
 
 alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer")]
-n_list = [101]
+n_list = [100]
 f_list = [20, 25, 33, 40]
 p_list = [100, 90, 80, 70, 60, 50]
 tests = 1000 
+
+comb = {
+    'alg23': {'msg_type': ['ack'], 'combinations': ['same', 'silent', 'opposite']}, 
+    'alg24': {'msg_type': ['ack', 'vote1', 'vote2'], 'combinations': [['silent', 'opposite', 'silent'], ['same', 'silent', 'opposite'], ['silent', 'opposite', 'opposite'], ['opposite', 'opposite', 'same'], ['silent', 'same', 'silent'], ['opposite', 'silent', 'silent'], ['opposite', 'same', 'same'], ['opposite', 'silent', 'opposite'], ['silent', 'same', 'opposite'], ['same', 'silent', 'same'], ['same', 'opposite', 'silent'], ['silent', 'opposite', 'same'], ['same', 'same', 'silent'], ['same', 'same', 'opposite'], ['silent', 'silent', 'silent'], ['same', 'opposite', 'opposite'], ['opposite', 'silent', 'same'], ['silent', 'same', 'same'], ['silent', 'silent', 'opposite'], ['opposite', 'opposite', 'silent'], ['opposite', 'opposite', 'opposite'], ['same', 'same', 'same'], ['same', 'opposite', 'same'], ['opposite', 'same', 'silent'], ['opposite', 'same', 'opposite'], ['same', 'silent', 'silent'], ['silent', 'silent', 'same']]}, 
+    'bracha': {'msg_type': ['echo', 'ready'], 'combinations': [['same', 'silent'], ['silent', 'opposite'], ['silent', 'same'], ['opposite', 'opposite'], ['same', 'opposite'], ['silent', 'silent'], ['opposite', 'same'], ['same', 'same'], ['opposite', 'silent']]}, 
+    'imbsraynal': {'msg_type': ['witness'], 'combinations': ['same', 'silent', 'opposite']}
+}
+
+def combination_to_string(l):
+    if type(l) == str:
+        return l
+    x = ""
+    for i in range(len(l)-1):
+        x+=l[i]+"_"
+    x+= l[-1]
+    return x
+
 
 def get_honest_groups(n, p, byz_nodes):
     num_honest = n - len(byz_nodes)
@@ -63,13 +80,16 @@ def getGlobalDelays_distribution(n):
 for alg, alg_class in alg_list:
     file_name = f"{alg}.json"
     file_path = dir_file_json / alg_class / file_name  
-    
-    experiments = {} 
-    experiments["experiments"] = []
-    
-    for n in n_list:
+    n = n_list[0]
+
+    for combination in comb[alg]['combinations']:
+        experiments = {} 
+        experiments["experiments"] = []
+        file_name = f"{alg}_{combination_to_string(combination)}.json"
+        file_path = dir_file_json / alg_class / file_name
         for f in f_list:
             for p in p_list:
+            
                 exp = {}
                 
                 exp["parameters"] = {}
@@ -87,10 +107,10 @@ for alg, alg_class in alg_list:
                 honest_group_0, honest_group_1 = get_honest_groups(n, p, byz_vec)
                 parameters["honest_group_0"] = honest_group_0
                 parameters["honest_group_1"] = honest_group_1
+                parameters["combination"] = combination
 
                 distribution = exp["distribution"]
                 distribution["type"] = "GEOMETRIC"
-                #distribution["type"] = "UNIFORM"
                 distribution["maxDelay"] = 10
                 distribution["global_delay"] = 5
                 distribution["global_delays_setting"] = "uniform"
@@ -105,23 +125,21 @@ for alg, alg_class in alg_list:
                 topology["initialPeers"] = n
                 topology["totalPeers"] = n 
 
-                exp["logFile"] = f"results_all/{alg}/n{n}_f{f}_p{p}.json"
-                file_path_on_disk = results_dir / alg / f"n{n}_f{f}_p{p}.json"
+                exp["logFile"] = f"results_all/{alg}/{combination_to_string(combination)}/n{n}_f{f}_p{p}.json"
+                file_path_on_disk = results_dir / alg / combination_to_string(combination) / f"n{n}_f{f}_p{p}.json"
                 os.makedirs(os.path.dirname(file_path_on_disk), exist_ok=True)  
                 with open(file_path_on_disk, 'w') as log_file:
                     json.dump({}, log_file)
                 exp["tests"] = 100
                 exp["rounds"] = 1000
                 exp["algorithm"] = alg
-                    
+                exp["output_status"] = file_name
                 experiments["experiments"].append(exp)
     
-    print(alg, alg_class)
-    file_name = f"{alg}.json"
-    file_path = dir_file_json / alg_class / file_name  
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)  
-    with open(file_path, 'w') as f:
-        json.dump(experiments, f, indent=4)
+        print(alg, alg_class)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)  
+        with open(file_path, 'w') as f:
+            json.dump(experiments, f, indent=4)
     
 
 

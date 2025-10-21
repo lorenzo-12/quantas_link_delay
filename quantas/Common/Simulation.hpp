@@ -327,7 +327,7 @@ namespace quantas {
 				std::cerr << "Error: could not open status.txt for writing\n";
 			}
 			if (status) {
-				status << config["algorithm"] << endl;
+				status << config["output_status"] << endl;
 				status.flush(); // ensure it hits disk promptly
 			}
 

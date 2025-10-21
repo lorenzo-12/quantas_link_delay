@@ -40,6 +40,7 @@ namespace quantas{
         long sender;
         int percentage;
         vector<interfaceId> honest_nodes;
+        vector<string> combination;
 
         int finished_round;
         int final_value;
