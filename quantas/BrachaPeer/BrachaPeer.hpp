@@ -89,6 +89,23 @@ namespace quantas{
             }
             return -1;
         }
+
+        inline int getReadyType(map<long, int> echo_msgs, int final_value, int echo_threshold){
+            int count_echo = 0;
+            for (const auto& m : echo_msgs) {
+                if (m.second == final_value) count_echo++;
+            }
+            if (count_echo >= echo_threshold) return 1;
+            return 2;
+        }
+
+        int addNodeResults(vector<int>& final_values_vec, vector<int>& final_times_vec, vector<int>& final_steps_vec, vector<int>& total_msgs_sent_vec) {
+            final_values_vec.push_back(final_value);
+            final_times_vec.push_back(finished_round);
+            final_steps_vec.push_back(getReadyType(echo_msgs, final_value, echo_threshold));
+            total_msgs_sent_vec.push_back(total_msgs_sent);
+            return delivery_threshold;
+        }
         // -----------------------------------------
 
 

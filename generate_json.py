@@ -134,6 +134,7 @@ for alg, alg_class in alg_list:
                 exp["rounds"] = 1000
                 exp["algorithm"] = alg
                 exp["output_status"] = file_name
+                exp["output_status_file"] = f"status_{alg}.txt"
                 experiments["experiments"].append(exp)
     
         print(alg, alg_class)

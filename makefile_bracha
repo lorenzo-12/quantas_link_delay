@@ -20,52 +20,9 @@ PROJECT_DIR := quantas
 #
 
 #----->
-INPUTFILE := test.json
-ALGFILE := Alg24Peer
+INPUTFILE := bracha_opposite_same.json
+ALGFILE := BrachaPeer
 #<-----
-
-#INPUTFILE := bracha.json
-#ALGFILE := BrachaPeer
-#INPUTFILE := imbsraynal.json
-#ALGFILE := ImbsRaynalPeer
-#INPUTFILE := alg24.json
-#ALGFILE := Alg24Peer
-#INPUTFILE := alg23.json
-#ALGFILE := Alg23Peer
-
-# INPUTFILE := BitcoinInput.json
-
-# ALGFILE := TrailPeer
-
-# ALGFILE := ExamplePeer
-
-# ALGFILE := BitcoinPeer
-
-# ALGFILE := EthereumPeer
-
-# ALGFILE := PBFTPeer
-
-# ALGFILE := RaftPeer
-
-# ALGFILE := SmartShardsPeer
-
-# ALGFILE := LinearChordPeer
-
-# ALGFILE := KademliaPeer
-
-# ALGFILE := AltBitPeer
-
-# ALGFILE := StableDataLinkPeer
-
-# ALGFILE := ChangRobertsPeer
-
-# ALGFILE := DynamicPeer
-
-# ALGFILE := KPTPeer
-
-# ALGFILE := KSMPeer
-
-# ALGFILE := CycleOfTreesPeer
 
 ####### end algorithm configuration
 

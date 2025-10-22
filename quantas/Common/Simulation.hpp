@@ -30,15 +30,6 @@ You should have received a copy of the GNU General Public License along with QUA
 using std::ofstream;
 using std::thread;
 
-inline int getReadyType(map<long, int> echo_msgs, int final_value, int echo_threshold){
-	int count_echo = 0;
-	for (const auto& m : echo_msgs) {
-		if (m.second == final_value) count_echo++;
-	}
-	if (count_echo >= echo_threshold) return 1;
-	return 2;
-}
-
 inline int getSteps(vector<int> node_ready_types, int delivery_threshold){
 	int count_type1 = 0;
 	for (int t : node_ready_types){
@@ -282,7 +273,6 @@ namespace quantas {
 				transmit_loop.wait();
 			}
 
-			
 			vector<int> final_values;
 			vector<int> final_times;
 			vector<int> final_steps;
@@ -290,41 +280,28 @@ namespace quantas {
 			int finishing_step = 0;
 			int delivery_threshold = 0;
 
-			/* // comment start bracha
+			for (auto const& p : system.peers()){
+				auto bp = dynamic_cast<peer_type*>(p);
+				delivery_threshold = bp->addNodeResults(final_values, final_times, final_steps, total_msgs_sent);
+			}
+
 			if (config["algorithm"] == "bracha"){
-				for (auto const& p : system.peers()){
-					auto bp = dynamic_cast<peer_type*>(p);
-					final_values.push_back(bp->final_value);
-					final_times.push_back(bp->finished_round);
-					delivery_threshold = bp->delivery_threshold; 
-					final_steps.push_back(getReadyType(bp->echo_msgs, bp->final_value, bp->echo_threshold));
-					total_msgs_sent.push_back(bp->total_msgs_sent);
-				}
 				finishing_step = getSteps(final_steps, delivery_threshold);
 				rc.addResult(final_values, final_times, finishing_step, total_msgs_sent);
 			}
-			// comment end bracha */
-
-			// comment start other
 			if (config["algorithm"] != "bracha"){
-				for (auto const& p : system.peers()){
-					auto bp = dynamic_cast<peer_type*>(p);
-					final_values.push_back(bp->final_value);
-					final_times.push_back(bp->finished_round);
-					final_steps.push_back(bp->finishing_step);
-					total_msgs_sent.push_back(bp->total_msgs_sent);
-				}
 				finishing_step = *std::max_element(final_steps.begin(), final_steps.end());
 				rc.addResult(final_values, final_times, finishing_step, total_msgs_sent);
 			}
-			// end comment other */
+
 
 
 			//cout << "Test " << i + 1 << " completed." << endl;
 
-			ofstream status("status.txt", std::ios::app);
+			string s = config.at("output_status_file").get<string>();
+			ofstream status(s, std::ios::app);
 			if (!status) {
-				std::cerr << "Error: could not open status.txt for writing\n";
+				std::cerr << "Error: could not open " << s << " for writing\n";
 			}
 			if (status) {
 				status << config["output_status"] << endl;

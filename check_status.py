@@ -21,14 +21,26 @@ def get_all_tests():
         ALL_TESTS.extend(l)
 
 
-status_file = pathlib.Path(__file__).parent / "status.txt"
+status_file = pathlib.Path(__file__).parent / "status_<alg>.txt"
 def reader_status():
-    with open(status_file, "r") as f:
-        lines = f.readlines()
     d = {}
     for f in ALL_TESTS:
         d[f] = 0
-    for line in lines:
+    
+    all_lines = []
+    with open(str(status_file).replace("<alg>", "bracha"), "r") as f:
+        lines = f.readlines()
+        all_lines += lines
+    with open(str(status_file).replace("<alg>", "imbsraynal"), "r") as f:
+        lines = f.readlines()
+        all_lines += lines
+    with open(str(status_file).replace("<alg>", "alg23"), "r") as f:
+        lines = f.readlines()
+        all_lines += lines
+    with open(str(status_file).replace("<alg>", "alg24"), "r") as f:
+        lines = f.readlines()
+        all_lines += lines
+    for line in all_lines:
         line = line.strip().replace('"',"")
         if line in ALL_TESTS:
             d[line] +=1

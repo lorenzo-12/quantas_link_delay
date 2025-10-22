@@ -13,24 +13,25 @@ parser = argparse.ArgumentParser(description="Run selected algorithm tests.")
 parser.add_argument(
     "--alg",
     type=str,
-    help="Algorithm to run (alg23, alg24, bracha, imbsraynal). Omit to run all.",
+    help="Algorithm to run (alg23, alg24, bracha, imbsraynal)",
 )
+args = parser.parse_args()
 
 
 
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
 
-simulation_file = pathlib.Path(__file__).parent / "quantas" / "Common" / "Simulation.hpp"
-makefile_file = pathlib.Path(__file__).parent / "makefile"
-status_file = pathlib.Path(__file__).parent / "status.txt"
+SIMULATION_FILE = pathlib.Path(__file__).parent / "quantas" / "Common" / "Simulation.hpp"
+MAKEFILE_FILE = pathlib.Path(__file__).parent / f"makefile_{args.alg}"
+STATUS_FILE = pathlib.Path(__file__).parent / f"status_{args.alg}.txt"
 
 # --- 1) Empty the status file at start ---
-#status_file.write_text("")  # truncate/clear
+STATUS_FILE.write_text("")  # truncate/clear
 
 start_time = time.time()
 
-MAX_CONCURRENCY = 4
+MAX_CONCURRENCY = 8
 
 ALGORITHMS = [
     ("BrachaPeer", "bracha.json"),
@@ -40,9 +41,10 @@ ALGORITHMS = [
 ]
 
 ALGORITHMS_TO_RUN = []
-def get_tests(alg_filter):
+def get_tests():
     global ALGORITHMS_TO_RUN
     ALGORITHMS_TO_RUN.clear()
+    alg_filter = args.alg
     directory_alg23 = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer"
     directory_alg24 = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer"
     directory_bracha = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer"
@@ -58,9 +60,11 @@ def get_tests(alg_filter):
         dirs = [(directory_imbsraynal, "ImbsRaynalPeer")]
 
     for directory, alg_class in dirs:
-        json_files = [f for f in os.listdir(directory) if f.endswith(".json") and "test" not in f]
+        json_files = sorted([f for f in os.listdir(directory) if f.endswith(".json") and "test" not in f])
         for json_file in json_files:
             ALGORITHMS_TO_RUN.append((alg_class, json_file))
+    
+    print(f"Found {len(ALGORITHMS_TO_RUN)} tests to run for algorithm filter '{alg_filter}'.")
 
 
 # Global stop event and process list
@@ -69,7 +73,7 @@ processes = []
 processes_lock = threading.Lock()
 
 def change_makefile(alg_peer, alg_json):
-    with open(makefile_file, "r") as f:
+    with open(MAKEFILE_FILE, "r") as f:
         lines = f.readlines()
     
     text = ""
@@ -89,44 +93,14 @@ def change_makefile(alg_peer, alg_json):
         else:
             text += line
             
-    with open(makefile_file, "w") as f:
-        f.write(text)
-        
-
-def change_simulation(alg_peer): 
-    print(f"Changing simulation to {alg_peer}")
-    with open(simulation_file, "r") as f:
-        text = f.read()
-    
-    if alg_peer == "BrachaPeer":
-        text = text.replace("/* // comment start bracha", "// comment start bracha")
-        text = text.replace("// comment end bracha */", "// comment end bracha")
-        
-        text = text.replace("/* // comment start other", "// comment start other")
-        text = text.replace("// comment start other", "/* // comment start other")
-        
-        text = text.replace("// comment end other */", "// comment end other")
-        text = text.replace("// comment end other", "// comment end other */")
-    
-    else:
-        text = text.replace("/* // comment start bracha", "// comment start bracha")
-        text = text.replace("// comment start bracha", "/* // comment start bracha")
-        
-        text = text.replace("// comment end bracha */", "// comment end bracha")
-        text = text.replace("// comment end bracha", "// comment end bracha */")
-        
-        text = text.replace("/* // comment start other", "// comment start other")
-        text = text.replace("// comment end other */", "// comment end other")
-
-    with open(simulation_file, "w") as f:
+    with open(MAKEFILE_FILE, "w") as f:
         f.write(text)
 
 
 def run_test(alg_peer, alg_json):
     change_makefile(alg_peer, alg_json)
-    change_simulation(alg_peer)
     print(RED,f"Running tests for {alg_json}",RESET)
-    cmd = ["make", "run"]
+    cmd = ["make", "-f", str(MAKEFILE_FILE), "run"]
     
     # Start the subprocess (non-blocking)
     proc = subprocess.Popen(cmd)
@@ -219,8 +193,7 @@ def main():
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    get_tests(args.alg)
+    get_tests()
     main()
     end_time = time.time()
     elapsed_time = end_time - start_time

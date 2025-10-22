@@ -76,6 +76,14 @@ namespace quantas{
                 ack_msgs.push_back(make_pair(m.source, m.value));
             }
         }
+
+        int addNodeResults(vector<int>& final_values_vec, vector<int>& final_times_vec, vector<int>& final_steps_vec, vector<int>& total_msgs_sent_vec) {
+            final_values_vec.push_back(final_value);
+            final_times_vec.push_back(finished_round);
+            final_steps_vec.push_back(finishing_step);
+            total_msgs_sent_vec.push_back(total_msgs_sent);
+            return 0;
+        }
         // -----------------------------------------
 
 
