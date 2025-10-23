@@ -8,6 +8,7 @@ import sys
 from queue import Queue
 import colorama 
 import argparse 
+import json
 
 parser = argparse.ArgumentParser(description="Run selected algorithm tests.")
 parser.add_argument(
@@ -15,9 +16,12 @@ parser.add_argument(
     type=str,
     help="Algorithm to run (alg23, alg24, bracha, imbsraynal)",
 )
+parser.add_argument(
+    "--list",
+    type=str,
+    help="List of tests to run (JSON array)",
+)
 args = parser.parse_args()
-
-
 
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
@@ -25,13 +29,13 @@ RESET = colorama.Fore.RESET
 SIMULATION_FILE = pathlib.Path(__file__).parent / "quantas" / "Common" / "Simulation.hpp"
 MAKEFILE_FILE = pathlib.Path(__file__).parent / f"makefile_{args.alg}"
 STATUS_FILE = pathlib.Path(__file__).parent / f"status_{args.alg}.txt"
+MAX_CONCURRENCY = 4
 
 # --- 1) Empty the status file at start ---
-STATUS_FILE.write_text("")  # truncate/clear
+#STATUS_FILE.write_text("")  # truncate/clear
 
 start_time = time.time()
 
-MAX_CONCURRENCY = 8
 
 ALGORITHMS = [
     ("BrachaPeer", "bracha.json"),
@@ -65,6 +69,16 @@ def get_tests():
             ALGORITHMS_TO_RUN.append((alg_class, json_file))
     
     print(f"Found {len(ALGORITHMS_TO_RUN)} tests to run for algorithm filter '{alg_filter}'.")
+
+
+if args.list is None:
+    get_tests()
+else:
+    ALGORITHMS_TO_RUN = json.loads(args.list)
+    print(f"Running {len(ALGORITHMS_TO_RUN)} tests from provided list for algorithm '{args.alg}'.")
+    json_str = json.dumps(ALGORITHMS_TO_RUN)
+    print(json_str)
+
 
 
 # Global stop event and process list
@@ -193,9 +207,10 @@ def main():
 
 
 if __name__ == "__main__":
-    get_tests()
     main()
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"All tests completed in {elapsed_time:.2f} seconds.")
+
+
 

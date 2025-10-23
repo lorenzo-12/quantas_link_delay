@@ -5,11 +5,11 @@ import json
 from scipy import stats
 
 
-DIR_RESULTS = pathlib.Path(__file__).parent / "results_all"
-DIR_IMG = pathlib.Path(__file__).parent / "img"
+DIR_RESULTS = pathlib.Path(__file__).parent.parent / "results_all"
+DIR_IMG = pathlib.Path(__file__).parent.parent / "img"
 
 ALGORITHM = ["alg23", "alg24", "bracha", "imbsraynal"]
-F_VALUES = [20, 25, 33, 40]
+F_VALUES = [19, 20, 25, 33, 40]
 P_VALUES = [50, 60, 70, 80, 90, 100]
 INFOS = ["delivery_nodes", "delivery_time", "termination_rate", "disagreement", "disagreement_frequency", "finishing_steps", "total_msgs_sent"]
 

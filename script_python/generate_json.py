@@ -4,9 +4,8 @@ import json
 import random
 
 
-dir_file_json = pathlib.Path(__file__).parent / "quantas" 
-base_file = pathlib.Path(__file__).parent / "base.json"
-results_dir = pathlib.Path(__file__).parent / "results_all"
+DIR_FILE_JSON = pathlib.Path(__file__).parent.parent / "quantas"
+RESULTS_DIR = pathlib.Path(__file__).parent.parent / "results_all"
 
 alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer")]
 n_list = [100]
@@ -79,14 +78,14 @@ def getGlobalDelays_distribution(n):
 
 for alg, alg_class in alg_list:
     file_name = f"{alg}.json"
-    file_path = dir_file_json / alg_class / file_name  
+    file_path = DIR_FILE_JSON / alg_class / file_name  
     n = n_list[0]
 
     for combination in comb[alg]['combinations']:
         experiments = {} 
         experiments["experiments"] = []
         file_name = f"{alg}_{combination_to_string(combination)}.json"
-        file_path = dir_file_json / alg_class / file_name
+        file_path = DIR_FILE_JSON / alg_class / file_name
         for f in f_list:
             for p in p_list:
             
@@ -126,7 +125,7 @@ for alg, alg_class in alg_list:
                 topology["totalPeers"] = n 
 
                 exp["logFile"] = f"results_all/{alg}/{combination_to_string(combination)}/n{n}_f{f}_p{p}.json"
-                file_path_on_disk = results_dir / alg / combination_to_string(combination) / f"n{n}_f{f}_p{p}.json"
+                file_path_on_disk = RESULTS_DIR / alg / combination_to_string(combination) / f"n{n}_f{f}_p{p}.json"
                 os.makedirs(os.path.dirname(file_path_on_disk), exist_ok=True)  
                 with open(file_path_on_disk, 'w') as log_file:
                     json.dump({}, log_file)

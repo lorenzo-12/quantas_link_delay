@@ -11,17 +11,17 @@ TOTAL_TESTS = 3000
 ALL_TESTS = []
 def get_all_tests():
     global ALL_TESTS
-    directory_alg23 = pathlib.Path(__file__).parent / "quantas" / "Alg23Peer"
-    directory_alg24 = pathlib.Path(__file__).parent / "quantas" / "Alg24Peer"
-    directory_bracha = pathlib.Path(__file__).parent / "quantas" / "BrachaPeer"
-    directory_imbsraynal = pathlib.Path(__file__).parent / "quantas" / "ImbsRaynalPeer"
+    directory_alg23 = pathlib.Path(__file__).parent.parent / "quantas" / "Alg23Peer"
+    directory_alg24 = pathlib.Path(__file__).parent.parent / "quantas" / "Alg24Peer"
+    directory_bracha = pathlib.Path(__file__).parent.parent / "quantas" / "BrachaPeer"
+    directory_imbsraynal = pathlib.Path(__file__).parent.parent / "quantas" / "ImbsRaynalPeer"
     dirs = [ directory_alg23, directory_alg24, directory_bracha, directory_imbsraynal ]
     for directory in dirs:
         l = [ file_name for file_name in os.listdir(directory) if file_name.endswith(".json") and "test" not in file_name]
         ALL_TESTS.extend(l)
 
 
-status_file = pathlib.Path(__file__).parent / "status_<alg>.txt"
+status_file = pathlib.Path(__file__).parent.parent / "status_<alg>.txt"
 def reader_status():
     d = {}
     for f in ALL_TESTS:
@@ -83,5 +83,5 @@ def reader_status():
 get_all_tests()
 while True:
     reader_status()
-    time.sleep(3)
+    time.sleep(5)
 

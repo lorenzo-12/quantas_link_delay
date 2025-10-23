@@ -14,7 +14,7 @@ def plots_single_algorithm(alg):
         # Symmetric, tiny horizontal offsets
         offsets = np.linspace(-0.9, 0.9, len(F_VALUES))
 
-        fig, axes = plt.subplots(3, 3, figsize=(14, 8), sharex=True)
+        fig, axes = plt.subplots(3, 3, figsize=(14, 10), sharex=True)
         axes = axes.ravel()
             
         for idx, info in enumerate(INFOS):
@@ -48,3 +48,5 @@ def plots_single_algorithm(alg):
             
 
 plots_single_algorithm("alg23")     
+plots_single_algorithm("imbsraynal")   
+plots_single_algorithm("bracha")   

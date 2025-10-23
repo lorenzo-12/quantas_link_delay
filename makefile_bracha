@@ -20,7 +20,7 @@ PROJECT_DIR := quantas
 #
 
 #----->
-INPUTFILE := bracha_opposite_same.json
+INPUTFILE := bracha_silent_silent.json
 ALGFILE := BrachaPeer
 #<-----
 

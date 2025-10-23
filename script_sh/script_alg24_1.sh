@@ -5,6 +5,5 @@
 source /etc/profile.d/modules.sh		# Shell initialization to use module
 module purge							# Environment cleanup
 module load python/anaconda3			# Loading of anaconda 3 module
-pip install colorama
 
-python run_tests.py --alg "alg23"
+python run_tests_groups.py --alg "alg24" --list '[["Alg24Peer", "alg24_opposite_opposite_opposite.json"], ["Alg24Peer", "alg24_opposite_opposite_same.json"], ["Alg24Peer", "alg24_opposite_opposite_silent.json"], ["Alg24Peer", "alg24_opposite_same_opposite.json"]]'
