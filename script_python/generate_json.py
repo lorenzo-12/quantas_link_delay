@@ -7,7 +7,7 @@ import random
 DIR_FILE_JSON = pathlib.Path(__file__).parent.parent / "quantas"
 RESULTS_DIR = pathlib.Path(__file__).parent.parent / "results_all"
 
-alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer")]
+alg_list = [("bracha","BrachaPeer"), ("imbsraynal", "ImbsRaynalPeer"), ("alg24", "Alg24Peer"), ("alg23", "Alg23Peer"), ("cool", "COOLPeer")]
 n_list = [100]
 f_list = [19, 20, 25, 33, 40]
 p_list = [100, 90, 80, 70, 60, 50]
@@ -17,7 +17,8 @@ comb = {
     'alg23': {'msg_type': ['ack'], 'combinations': ['same', 'silent', 'opposite']}, 
     'alg24': {'msg_type': ['ack', 'vote1', 'vote2'], 'combinations': [['silent', 'opposite', 'silent'], ['same', 'silent', 'opposite'], ['silent', 'opposite', 'opposite'], ['opposite', 'opposite', 'same'], ['silent', 'same', 'silent'], ['opposite', 'silent', 'silent'], ['opposite', 'same', 'same'], ['opposite', 'silent', 'opposite'], ['silent', 'same', 'opposite'], ['same', 'silent', 'same'], ['same', 'opposite', 'silent'], ['silent', 'opposite', 'same'], ['same', 'same', 'silent'], ['same', 'same', 'opposite'], ['silent', 'silent', 'silent'], ['same', 'opposite', 'opposite'], ['opposite', 'silent', 'same'], ['silent', 'same', 'same'], ['silent', 'silent', 'opposite'], ['opposite', 'opposite', 'silent'], ['opposite', 'opposite', 'opposite'], ['same', 'same', 'same'], ['same', 'opposite', 'same'], ['opposite', 'same', 'silent'], ['opposite', 'same', 'opposite'], ['same', 'silent', 'silent'], ['silent', 'silent', 'same']]}, 
     'bracha': {'msg_type': ['echo', 'ready'], 'combinations': [['same', 'silent'], ['silent', 'opposite'], ['silent', 'same'], ['opposite', 'opposite'], ['same', 'opposite'], ['silent', 'silent'], ['opposite', 'same'], ['same', 'same'], ['opposite', 'silent']]}, 
-    'imbsraynal': {'msg_type': ['witness'], 'combinations': ['same', 'silent', 'opposite']}
+    'imbsraynal': {'msg_type': ['witness'], 'combinations': ['same', 'silent', 'opposite']},
+    'cool': {'msg_type': ['exchange',"ok1","ok2","done","yourpoint","mypoint"], 'combinations': [['silent','silent','silent','silent','silent','silent'], ['same','same','same','same','same','same'], ['opposite','opposite','opposite','opposite','opposite','opposite']]}
 }
 
 def combination_to_string(l):
@@ -129,8 +130,8 @@ for alg, alg_class in alg_list:
                 os.makedirs(os.path.dirname(file_path_on_disk), exist_ok=True)  
                 with open(file_path_on_disk, 'w') as log_file:
                     json.dump({}, log_file)
-                exp["tests"] = 100
-                exp["rounds"] = 1000
+                exp["tests"] = 50
+                exp["rounds"] = 100
                 exp["algorithm"] = alg
                 exp["output_status"] = file_name
                 exp["output_status_file"] = f"status_{alg}.txt"

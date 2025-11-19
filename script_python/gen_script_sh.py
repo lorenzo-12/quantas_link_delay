@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description="Run selected algorithm tests.")
 parser.add_argument(
     "--alg",
     type=str,
-    help="Algorithm to run (alg23, alg24, bracha, imbsraynal)",
+    help="Algorithm to run (alg23, alg24, bracha, imbsraynal, cool)",
 )
 args = parser.parse_args()
 
@@ -26,6 +26,7 @@ ALGORITHMS = [
     ("Alg23Peer", "alg23.json"),
     ("Alg24Peer", "alg24.json"),
     ("ImbsRaynalPeer", "imbsraynal.json"),
+    ("COOLPeer", "cool.json")
 ]
 
 ALGORITHMS_TO_RUN = []
@@ -37,6 +38,7 @@ def get_tests():
     directory_alg24 = pathlib.Path(__file__).parent.parent / "quantas" / "Alg24Peer"
     directory_bracha = pathlib.Path(__file__).parent.parent / "quantas" / "BrachaPeer"
     directory_imbsraynal = pathlib.Path(__file__).parent.parent / "quantas" / "ImbsRaynalPeer"
+    directory_cool = pathlib.Path(__file__).parent.parent / "quantas" / "COOLPeer"
     dirs = []
     if alg_filter == "alg23":
         dirs = [(directory_alg23, "Alg23Peer")]
@@ -46,6 +48,8 @@ def get_tests():
         dirs = [(directory_bracha, "BrachaPeer")]
     elif alg_filter == "imbsraynal":
         dirs = [(directory_imbsraynal, "ImbsRaynalPeer")]
+    elif alg_filter == "cool":
+        dirs = [(directory_cool, "COOLPeer")]
 
     for directory, alg_class in dirs:
         json_files = sorted([f for f in os.listdir(directory) if f.endswith(".json") and "test" not in f])

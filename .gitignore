@@ -31,3 +31,4 @@ results_backup/
 results_all/
 *.stderr
 *.stdout
+img/ 
